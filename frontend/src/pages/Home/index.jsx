@@ -2,7 +2,7 @@ import { Button, Col, DatePicker, Form, Input, Row, Select, Spin } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import callApi from '~/api';
+import callApi from '~/utils/api';
 import { pageLoadingState } from '~/recoil/store/app';
 import { studentAvatarState, studentIdState, studentNameState } from '~/recoil/store/student';
 import { showNotification } from '~/utils';

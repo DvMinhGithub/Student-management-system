@@ -1,0 +1,20 @@
+.row-wrapper {
+    margin-bottom: 20px;
+
+    .ant-input-group {
+        width: 60%;
+    }
+
+    .col-wrapper {
+        text-align: right;
+
+        .button-box {
+            margin-right: 10px;
+        }
+    }
+}
+
+.ant-form-item-label {
+    font-weight: 600;
+    margin-bottom: 10px;
+}

@@ -3,7 +3,7 @@ import { Avatar, Breadcrumb, Dropdown, Form, Input, Layout, Menu, Modal, Spin, n
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import callApi from '~/api';
+import callApi from '~/utils/api';
 import { accessTokenState, accountIdState } from '~/recoil/store/account';
 import { pageLoadingState } from '~/recoil/store/app';
 import { studentAvatarState, studentNameState } from '~/recoil/store/student';

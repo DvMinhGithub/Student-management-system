@@ -9,8 +9,8 @@ import {
 
 import PageLayout from '~/components/layout';
 import HomePage from '../Home';
-import AccountPage from './Account';
-import CoursePage from './Course';
+import AccountPage from './Account/AccountPage';
+import CoursePage from './Course/CoursePage';
 import SemesterPage from './Semester';
 import StudentPage from './Student';
 import TeacherPage from './Teacher';

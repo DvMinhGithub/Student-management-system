@@ -1,7 +1,7 @@
 import { Button, Form, Input, Spin, Tabs } from 'antd';
 import { useEffect, useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import callApi from '~/api';
+import callApi from '~/utils/api';
 import { accessTokenState, accountIdState, accountRoleState } from '~/recoil/store/account';
 import { pageLoadingState } from '~/recoil/store/app';
 import { studentAvatarState, studentIdState, studentNameState } from '~/recoil/store/student';
