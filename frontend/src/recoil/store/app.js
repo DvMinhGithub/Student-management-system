@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
 export const pageLoadingState = atom({
-    key: '@app/loading',
+    key: '@pageLoading',
     default: false,
 });

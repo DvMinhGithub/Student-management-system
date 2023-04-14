@@ -6,7 +6,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { pageLoadingState } from '~/recoil/store/app';
 import { studentAvatarState, studentNameState } from '~/recoil/store/student';
 import './index.scss';
-const { Header, Footer, Sider, Content } = Layout;
+const { Header, Sider, Content } = Layout;
 
 export default function PageLayout({ menuItems }) {
     const navigate = useNavigate();

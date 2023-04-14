@@ -1,18 +1,18 @@
 import { atom } from 'recoil';
 import { persistAtom } from '../persist';
 
-export const studentIdState = atom({
-    key: '@studentId',
+export const accessTokenState = atom({
+    key: '@accessToken',
     default: '',
     effects_UNSTABLE: [persistAtom],
 });
-export const studentNameState = atom({
-    key: '@studentName',
+export const accountIdState = atom({
+    key: '@accountId',
     default: '',
     effects_UNSTABLE: [persistAtom],
 });
-export const studentAvatarState = atom({
-    key: '@studentAvatar',
+export const accountRoleState = atom({
+    key: '@accountRole',
     default: '',
     effects_UNSTABLE: [persistAtom],
 });
