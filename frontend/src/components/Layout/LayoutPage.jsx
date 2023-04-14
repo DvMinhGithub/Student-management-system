@@ -8,7 +8,7 @@ import { accessTokenState, accountIdState } from '~/recoil/store/account';
 import { pageLoadingState } from '~/recoil/store/app';
 import { studentAvatarState, studentNameState } from '~/recoil/store/student';
 import { showNotification } from '~/utils';
-import './index.scss';
+import './LayoutPage.scss';
 const { Header, Sider, Content } = Layout;
 
 export default function PageLayout({ menuItems }) {

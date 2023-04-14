@@ -7,12 +7,12 @@ import {
     UserOutlined,
 } from '@ant-design/icons';
 
-import PageLayout from '~/components/layout';
+import PageLayout from '~/components/Layout/LayoutPage';
 import HomePage from '../Home';
-import AccountPage from './Account/AccountPage';
-import CoursePage from './Course/CoursePage';
+import AccountPage from './Account/Account';
+import CoursePage from './Course/Course';
 import SemesterPage from './Semester';
-import StudentPage from './Student';
+import StudentPage from './Student/Student';
 import TeacherPage from './Teacher';
 
 export default function AdminPage() {

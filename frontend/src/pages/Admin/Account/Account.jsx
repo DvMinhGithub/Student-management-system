@@ -8,8 +8,8 @@ import removeDiacritics from 'remove-diacritics';
 import { STORE } from '~/contants';
 import { pageLoadingState } from '~/recoil/store/app';
 import { showNotification } from '~/utils';
-import './AccountPage.scss';
 import callApi from '~/utils/api';
+import './Account.scss';
 
 export default function AccountPage() {
     const [searchValue, setSearchValue] = useState('');

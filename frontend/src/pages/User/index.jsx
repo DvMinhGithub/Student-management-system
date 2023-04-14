@@ -1,7 +1,7 @@
 import React from 'react';
 import HomePage from '../Home';
 import CoursePage from './Course';
-import PageLayout from '~/components/layout';
+import PageLayout from '~/components/Layout/LayoutPage';
 
 export default function UserPage() {
     const menuItems = [
