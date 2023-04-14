@@ -27,4 +27,4 @@ const uploadFile = (type) => (req, res, next) => {
     next();
   });
 };
-module.exports = { uploadFile };
+module.exports = uploadFile;
