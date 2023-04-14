@@ -21,4 +21,5 @@ const callApi = async ({ method, url, data, params, accessToken }) => {
         throw error.res.data;
     }
 };
+
 export default callApi;

@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input, Spin, Tabs } from 'antd';
+import { Button, Form, Input, Spin, Tabs } from 'antd';
 import { useEffect, useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import callApi from '~/api';

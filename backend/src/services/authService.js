@@ -14,7 +14,7 @@ const getUniqueCode = async () => {
 };
 
 module.exports = {
-  register: async ({ body }) => {
+  register: async (body) => {
     try {
       const { username, password, email, name } = body;
       const [existingAccountName, existingStudent] = await Promise.all([
@@ -23,7 +23,7 @@ module.exports = {
       ]);
 
       if (existingAccountName)
-        return { code: 401, message: "Username đã được sử dụng" };
+        return { code: 401, message: "Tài khoản đã được sử dụng" };
 
       if (existingStudent)
         return { code: 401, message: "Email đã được sử dụng" };
@@ -41,7 +41,6 @@ module.exports = {
         account: newAccount._id,
       });
       await Account.findByIdAndUpdate(newAccount._id, { student: student._id });
-
       return { code: 201, message: "Đăng ký tài khoản thành công" };
     } catch (error) {
       console.error(error);
