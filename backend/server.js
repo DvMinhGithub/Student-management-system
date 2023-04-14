@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const bodyParser = require("body-parser");
 const express = require("express");
+const cors = require("cors");
 const createError = require("http-errors");
 
 const routes = require("./src/routes");
@@ -12,6 +13,7 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 app.use(routes);
 
 connectDatabase();

@@ -1,0 +1,59 @@
+const accountService = require("../services/accountService");
+
+module.exports = {
+  getAllAccounts: async (req, res, next) => {
+    try {
+      const { data } = await accountService.getAllAccounts();
+      return res.json({ data });
+    } catch (error) {
+      next(error);
+    }
+  },
+  getDetailAccount: async (req, res, next) => {
+    try {
+      const { data } = await accountService.getDetailAccount({
+        accountId: req.params.id,
+      });
+      return res.json({ data });
+    } catch (error) {
+      next(error);
+    }
+  },
+  updateAccountById: async (req, res, next) => {
+    try {
+      const id = req.params.id;
+      const { code, message, data } = await accountService.updateAccountById({
+        id,
+        body: req.body,
+      });
+      return res.status(code).json({ message, data });
+    } catch (error) {
+      next(error);
+    }
+  },
+  deleteAccountById: async (req, res, next) => {
+    try {
+      const { code, message } = await accountService.deleteAccountById(
+        req.params.id
+      );
+      res.status(code).json({ message });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  changePassword: async (req, res, next) => {
+    try {
+      const accountId = req.params.id;
+      const { oldPassword, newPassword } = req.body;
+      const { code, message } = await accountService.changePassword({
+        accountId,
+        oldPassword,
+        newPassword,
+      });
+      return res.status(code).json({ message });
+    } catch (error) {
+      next(error);
+    }
+  },
+};
