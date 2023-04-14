@@ -157,7 +157,7 @@ export default function HomePage() {
                             </Col>
                         </Row>
                         <Form.Item>
-                            <Button type="primary" htmlType="submit" onClick={hanldeUpdate}>
+                            <Button type="primary" onClick={hanldeUpdate}>
                                 Cập nhật
                             </Button>
                         </Form.Item>
