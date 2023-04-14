@@ -1,0 +1,46 @@
+.page__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    margin-bottom: 28px;
+    background: #fff;
+    .header-left {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+        font-weight: 500;
+        color: #fff;
+    }
+    .header-right {
+        display: flex;
+        align-items: center;
+    }
+    .header-username {
+        margin-right: 16px;
+        font-size: 16px;
+        font-weight: 500;
+    }
+    .ant-breadcrumb-separator a {
+        text-decoration: none;
+        font-weight: 500;
+        color: black;
+    }
+}
+.page__content {
+    background: #fff;
+    padding: 15px;
+}
+.logo {
+    height: 100px;
+    margin: 16px;
+    background-image: url('http://manhpham.site:3000/static/media/dthl_logo.e69eb0424881e2f6ce9a.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.ant-form-item-label {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
