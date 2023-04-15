@@ -19,6 +19,7 @@ export default function AccountPage() {
     const [isOpenModal, setIsOpenModal] = useState(false);
 
     const [listAccount, setListAccount] = useState([]);
+    
     let [selectAccount, setSelectAccount] = useState(null);
 
     const [pagination, setPagination] = useState({

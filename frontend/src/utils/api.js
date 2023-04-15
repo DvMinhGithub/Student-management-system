@@ -18,7 +18,7 @@ const callApi = async ({ method, url, data, params, accessToken }) => {
         });
         return res.data;
     } catch (error) {
-        throw error.res.data;
+        throw error.response.data;
     }
 };
 

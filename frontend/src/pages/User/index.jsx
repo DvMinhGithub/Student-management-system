@@ -1,6 +1,6 @@
 import React from 'react';
 import HomePage from '../Home/Home';
-import CoursePage from './Course';
+import CoursePage from './Course/Course';
 import PageLayout from '~/components/Layout/LayoutPage';
 
 export default function UserPage() {

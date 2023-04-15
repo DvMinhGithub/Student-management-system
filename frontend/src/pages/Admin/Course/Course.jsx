@@ -1,4 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */ import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
     Button,
     Col,
@@ -21,8 +22,8 @@ import removeDiacritics from 'remove-diacritics';
 import { STORE } from '~/contants';
 import { pageLoadingState } from '~/recoil/store/app';
 import { showNotification } from '~/utils';
-import './Course.scss';
 import callApi from '~/utils/api';
+import './Course.scss';
 
 export default function CoursePage() {
     const [searchValue, setSearchValue] = useState({ nameCourse: '', nameSemester: '' });

@@ -36,6 +36,7 @@ export default function HomePage() {
         }
     };
     useEffect(() => {
+        document.title = 'Trang chủ'
         getStudentInfo();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
