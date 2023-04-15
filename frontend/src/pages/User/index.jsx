@@ -1,5 +1,5 @@
 import React from 'react';
-import HomePage from '../Home';
+import HomePage from '../Home/Home';
 import CoursePage from './Course';
 import PageLayout from '~/components/Layout/LayoutPage';
 

@@ -1,5 +1,5 @@
 import AdminPage from '~/pages/Admin';
-import LoginPage from '~/pages/Login';
+import LoginPage from '~/pages/Login/LoginPage';
 import UserPage from '~/pages/User';
 
 const publicRoutes = [

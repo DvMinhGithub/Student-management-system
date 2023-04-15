@@ -163,7 +163,8 @@ export default function StudentPage() {
                         }
                         onConfirm={() => hanldeDeleteStudent(item._id)}
                         okText="Đồng ý"
-                        cancelText="Hủy"w
+                        cancelText="Hủy"
+                        w
                         okType="danger">
                         <a style={{ color: 'red' }}>
                             <DeleteOutlined />
@@ -262,9 +263,10 @@ export default function StudentPage() {
                                 <DatePicker
                                     placeholder="Ngày sinh"
                                     name="dateOfBirth"
+                                    format="DD-MM-YYYY"
                                     value={dayjs(selectStudent?.dateOfBirth)}
                                     onChange={(_, dateString) => {
-                                        selectStudent({ ...selectStudent, dateOfBirth: dateString });
+                                        setSelectStudent({ ...selectStudent, dateOfBirth: dateString });
                                     }}
                                 />
                             </Form.Item>

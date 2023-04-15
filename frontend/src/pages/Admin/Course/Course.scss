@@ -1,0 +1,29 @@
+.upload-container {
+    margin-left: 10px;
+}
+
+.row-wrapper {
+    margin-bottom: 20px;
+
+    .select-semester {
+        margin-right: 10px;
+        width: 25%;
+    }
+
+    .search-course {
+        width: 70%;
+    }
+
+    .col-wrapper {
+        text-align: right;
+
+        .button-box {
+            margin-right: 10px;
+        }
+    }
+}
+
+.ant-form-item-label {
+    font-weight: 600;
+    margin-bottom: 10px;
+}

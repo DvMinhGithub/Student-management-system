@@ -8,12 +8,12 @@ import {
 } from '@ant-design/icons';
 
 import PageLayout from '~/components/Layout/LayoutPage';
-import HomePage from '../Home';
+import HomePage from '../Home/Home';
 import AccountPage from './Account/Account';
 import CoursePage from './Course/Course';
 import SemesterPage from './Semester';
 import StudentPage from './Student/Student';
-import TeacherPage from './Teacher';
+import TeacherPage from './Teacher/Teacher';
 
 export default function AdminPage() {
     const menuItems = [

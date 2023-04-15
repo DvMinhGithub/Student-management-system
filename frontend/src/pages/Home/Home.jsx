@@ -2,11 +2,11 @@ import { Button, Col, DatePicker, Form, Input, Row, Select, Spin } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import callApi from '~/utils/api';
 import { pageLoadingState } from '~/recoil/store/app';
 import { studentAvatarState, studentIdState, studentNameState } from '~/recoil/store/student';
 import { showNotification } from '~/utils';
-import './index.scss';
+import callApi from '~/utils/api';
+import './Home.scss';
 
 export default function HomePage() {
     const [userInfo, setUserInfo] = useState({});
@@ -138,6 +138,7 @@ export default function HomePage() {
                                     <DatePicker
                                         placeholder="Ngày sinh"
                                         style={{ width: '100%' }}
+                                        format='DD-MM-YYYY'
                                         name="dateOfBirth"
                                         value={dayjs(userInfo?.dateOfBirth)}
                                         onChange={(_, dateString) => {

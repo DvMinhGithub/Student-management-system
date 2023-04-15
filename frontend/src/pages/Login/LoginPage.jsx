@@ -6,7 +6,7 @@ import { accessTokenState, accountIdState, accountRoleState } from '~/recoil/sto
 import { pageLoadingState } from '~/recoil/store/app';
 import { studentAvatarState, studentIdState, studentNameState } from '~/recoil/store/student';
 import { showNotification } from '~/utils';
-import './index.scss';
+import './LoginPage.scss';
 
 export default function LoginPage() {
     const setAccessToken = useSetRecoilState(accessTokenState);
