@@ -11,7 +11,7 @@ import PageLayout from '~/components/Layout/LayoutPage';
 import HomePage from '../Home/Home';
 import AccountPage from './Account/Account';
 import CoursePage from './Course/Course';
-import SemesterPage from './Semester';
+import SemesterPage from './Semester/Semester';
 import StudentPage from './Student/Student';
 import TeacherPage from './Teacher/Teacher';
 
