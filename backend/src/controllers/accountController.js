@@ -1,6 +1,14 @@
 const accountService = require("../services/accountService");
 
 module.exports = {
+  createAccount: async (req, res, next) => {
+    try {
+      const { code, ...rest } = await accountService.createAccount(req.body);
+      return res.json({ ...rest });
+    } catch (error) {
+      next(error);
+    }
+  },
   getAllAccounts: async (req, res, next) => {
     try {
       const { data } = await accountService.getAllAccounts();
@@ -11,9 +19,8 @@ module.exports = {
   },
   getDetailAccount: async (req, res, next) => {
     try {
-      const { data } = await accountService.getDetailAccount({
-        accountId: req.params.id,
-      });
+      console.log(req.account)
+      const { data } = await accountService.getDetailAccount(req.params.id);
       return res.json({ data });
     } catch (error) {
       next(error);

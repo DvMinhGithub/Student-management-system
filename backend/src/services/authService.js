@@ -29,18 +29,19 @@ module.exports = {
         return { code: 401, message: "Email đã được sử dụng" };
 
       const hashedPassword = await bcrypt.hash(password, 10);
+
       const newAccount = await Account.create({
         username,
         password: hashedPassword,
       });
 
-      const student = await Student.create({
+      await Student.create({
         code: await getUniqueCode(),
         name,
         email,
         account: newAccount._id,
       });
-      await Account.findByIdAndUpdate(newAccount._id, { student: student._id });
+
       return { code: 201, message: "Đăng ký tài khoản thành công" };
     } catch (error) {
       console.error(error);
@@ -52,17 +53,22 @@ module.exports = {
       if (!username || !password)
         return { code: 401, message: "Vui lòng nhập tài khoản và mật khẩu" };
 
-      const account = await Account.findOneAndUpdate(
-        { username },
-        { lastLogin: Date.now() }
-      ).populate("student");
+      const account = await Account.findOne({ username })
+        .populate("admin")
+        .populate("teacher")
+        .populate("student");
+
       if (!account) return { code: 401, message: "Tài khoản không hợp lệ" };
 
       const match = await bcrypt.compare(password, account.password);
       if (!match) return { code: 401, message: "Mật khẩu không hợp lệ" };
 
       const token = jwt.sign(
-        { accountId: account._id, role: account.role },
+        {
+          accountId: account._id,
+          [account.role + "Id"]: account[account.role]._id.toString(),
+          role: account.role,
+        },
         process.env.JWT_SECRET,
         {
           expiresIn: "5m",

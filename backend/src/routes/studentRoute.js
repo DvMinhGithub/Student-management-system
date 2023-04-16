@@ -3,9 +3,10 @@ const router = express.Router();
 
 const studentController = require("../controllers/studentController");
 const uploadFile = require("../middlewares/uploadFile");
+const { verifyToken } = require("../middlewares/verify");
 
 router.get("/", studentController.getAllStudents);
-router.get("/:id", studentController.getDetailStudent);
+router.get("/detail", verifyToken, studentController.getDetailStudent);
 
 router.post("/", studentController.addStudent);
 router.post("/uploadExcel", uploadFile("file"), studentController.uploadExcel);

@@ -8,7 +8,7 @@ module.exports = {
       return { code: 200, message: "Tạo học kỳ thành công", data: semester };
     } catch (error) {
       console.error(error.message);
-      return { code: 500, message: error.message };
+      return { code: 500, message: error.data.message };
     }
   },
   // Get all semesters
@@ -18,7 +18,7 @@ module.exports = {
       return { code: 200, data: semesters };
     } catch (error) {
       console.error(error);
-      return { code: 500, message: error.message };
+      return { code: 500, message: error.data.message };
     }
   },
   // Get a single semester by ID
