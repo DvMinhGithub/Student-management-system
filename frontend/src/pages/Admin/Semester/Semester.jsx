@@ -37,7 +37,7 @@ export default function SemesterPage() {
             const res = await callApi({ method: 'get', url: '/semesters' });
             setSemesters(res.data);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
@@ -81,7 +81,7 @@ export default function SemesterPage() {
             showNotification('success', res.message);
             setIsOpenModal(false);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
@@ -94,7 +94,7 @@ export default function SemesterPage() {
             setSemesters((pre) => pre.filter((student) => student._id !== id));
             showNotification('success', res.message);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }

@@ -37,7 +37,7 @@ export default function StudentPage() {
             const res = await callApi({ method: 'get', url: `/students` });
             setStudents(res.data);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
@@ -88,7 +88,7 @@ export default function StudentPage() {
             }
             setIsOpenModal(false);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
@@ -101,7 +101,7 @@ export default function StudentPage() {
             setStudents((pre) => pre.filter((student) => student._id !== idDelete));
             showNotification('success', res.message);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
@@ -194,7 +194,7 @@ export default function StudentPage() {
             setStudents((prevStudents) => [...prevStudents, ...res.data]);
             showNotification('success', res.message);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }

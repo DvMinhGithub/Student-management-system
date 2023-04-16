@@ -1,79 +1,81 @@
 import { Button, Col, DatePicker, Form, Input, Row, Select, Spin } from 'antd';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import jwtDecodeb from 'jwt-decode';
+import { useCallback, useEffect, useState } from 'react';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { accessTokenState } from '~/recoil/store/account';
 import { pageLoadingState } from '~/recoil/store/app';
-import { studentAvatarState, studentIdState, studentNameState } from '~/recoil/store/student';
+import { studentAvatarState, studentNameState } from '~/recoil/store/student';
 import { showNotification } from '~/utils';
 import callApi from '~/utils/api';
 import './Home.scss';
 
 export default function HomePage() {
     const [userInfo, setUserInfo] = useState({});
-
-    const [previewImg, setPreviewImg] = useState();
-
     const [avatar, setAvatar] = useState(null);
-
-    const studentId = useRecoilValue(studentIdState);
-
+    const [previewImg, setPreviewImg] = useState();
     const setStudentName = useSetRecoilState(studentNameState);
-
     const setStudentAvatar = useSetRecoilState(studentAvatarState);
-
     const [pageLoading, setPageLoading] = useRecoilState(pageLoadingState);
+    const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
 
-    const getStudentInfo = async () => {
+    const getStudentInfo = useCallback(async () => {
+        let { role, userId } = jwtDecodeb(accessToken);
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'GET', url: `/students/${studentId}` });
-            setUserInfo(res.data);
-            setStudentName(res.data.name);
+            const { data } = await callApi({ method: 'GET', url: `/${role}s/detail/${userId}`, accessToken });
+            setUserInfo(data);
+            setStudentName(data.name);
         } catch (error) {
-            showNotification('error', error.message);
+            if (error.status === 401) setAccessToken('');
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
-    };
-    useEffect(() => {
-        document.title = 'Trang chủ'
-        getStudentInfo();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [accessToken, setPageLoading, setStudentName, setAccessToken]);
 
-    const handleChangeInput = (e) => {
+    useEffect(() => {
+        document.title = 'Trang chủ';
+        getStudentInfo();
+    }, [getStudentInfo]);
+
+    const handleChangeInput = useCallback((e) => {
         const { name, value } = e.target;
-        setUserInfo((preStudent) => ({
-            ...preStudent,
+        setUserInfo((prevUserInfo) => ({
+            ...prevUserInfo,
             [name]: value,
         }));
-    };
+    }, []);
 
-    const hanldeUpdate = async () => {
-        setPageLoading(true);
-        try {
-            const data = new FormData();
-            if (avatar) {
-                data.append('avatar', avatar);
-            }
-            const { courses, ...updatedUserInfo } = userInfo;
-            Object.keys(updatedUserInfo).forEach((key) => {
-                data.append(key, updatedUserInfo[key]);
-            });
-            const res = await callApi({ method: 'PUT', url: `/students/${userInfo._id}`, data });
-            setStudentName(res.data.name);
-            setStudentAvatar(res.data.avatar);
-            showNotification('success', res.message);
-        } catch (error) {
-            showNotification('error', error.message);
-        } finally {
-            setPageLoading(false);
-        }
-    };
-
-    const handlePreview = (file) => {
+    const handlePreview = useCallback((file) => {
         setAvatar(file);
         setPreviewImg(URL.createObjectURL(file));
+    }, []);
+
+    const hanldeUpdate = async () => {
+        let { role } = jwtDecodeb(accessToken);
+
+        setPageLoading(true);
+        const data = new FormData();
+        if (avatar) {
+            data.append('avatar', avatar);
+        }
+        const { courses, ...updatedUserInfo } = userInfo;
+        Object.keys(updatedUserInfo).forEach((key) => {
+            data.append(key, updatedUserInfo[key]);
+        });
+        callApi({ method: 'PUT', url: `/${role}s/${userInfo._id}`, data, accessToken })
+            .then((res) => {
+                setStudentName(res.data.name);
+                setStudentAvatar(res.data.avatar);
+                showNotification('success', res.message);
+            })
+            .catch((error) => {
+                showNotification('error', error.data.message);
+            })
+            .finally(() => {
+                setPageLoading(false);
+            });
     };
 
     return (
@@ -139,7 +141,7 @@ export default function HomePage() {
                                     <DatePicker
                                         placeholder="Ngày sinh"
                                         style={{ width: '100%' }}
-                                        format='DD-MM-YYYY'
+                                        format="DD-MM-YYYY"
                                         name="dateOfBirth"
                                         value={dayjs(userInfo?.dateOfBirth)}
                                         onChange={(_, dateString) => {

@@ -1,8 +1,9 @@
 const Course = require("../models/courseModel");
 const Teacher = require("../models/teacherModel");
 const Account = require("../models/accountModel");
-const xlsx = require("xlsx");
 
+const xlsx = require("xlsx");
+const bcrypt = require("bcrypt");
 const getUniqueTeacherCode = async () => {
   let currentDate = new Date();
   let year = currentDate.getFullYear().toString().substr(-2);
@@ -39,29 +40,6 @@ module.exports = {
       console.error(error);
     }
   },
-  // updatedTeacher: async ({ teacherId, data }) => {
-  //     try {
-  //         const oldTeacher = await Teacher.findById(teacherId);
-  //         const oldCoursesObj = oldTeacher.courses;
-  //         const oldCourses = oldCoursesObj.map((objId) => objId.toString());
-  //         const newCourses = data.courses;
-  //         const coursesToRemove = oldCourses.filter((courseId) => !newCourses.includes(courseId));
-  //         const coursesToAdd = newCourses.filter((courseId) => !oldCourses.includes(courseId));
-  //         data.courses = newCourses;
-  //         await Teacher.findByIdAndUpdate(teacherId, data);
-  //         await Course.updateMany({ _id: { $in: coursesToRemove } }, { $pull: { teachers: teacherId } });
-  //         await Course.updateMany({ _id: { $in: coursesToAdd } }, { $push: { teachers: teacherId } });
-  //         const teacherUpdated = await Teacher.findById(teacherId).populate('courses');
-  //         return {
-  //             code: 200,
-  //             message: 'Cập nhật giảng viên thành công',
-  //             data: teacherUpdated,
-  //         };
-  //     } catch (error) {
-  //         console.error(error);
-  //         return { code: 400, message: 'Cập nhật giảng viên thất bại' };
-  //     }
-  // },
   updatedTeacher: async ({ teacherId, data }) => {
     try {
       const oldTeacher = await Teacher.findById(teacherId);
@@ -119,6 +97,11 @@ module.exports = {
       const accountPromises = [];
 
       for (const row of data) {
+        const hashedPassword = await bcrypt.hash(
+          row["Số điện thoại"].toString(),
+          10
+        );
+
         const courseNames = row["Môn học"].includes(",")
           ? row["Môn học"].split(", ")
           : [row["Môn học"]];
@@ -141,7 +124,8 @@ module.exports = {
         const account = new Account({
           username: newTeacher.code,
           password: hashedPassword,
-          user: newTeacher._id,
+          teacher: newTeacher._id,
+          role: "teacher",
         });
         accountPromises.push(account.save());
       }

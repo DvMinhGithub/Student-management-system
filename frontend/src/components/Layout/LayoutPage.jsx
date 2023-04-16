@@ -128,8 +128,8 @@ export default function PageLayout({ menuItems }) {
                 data: changePassword,
             });
             showNotification('success', res.message);
-        } catch (err) {
-            showNotification('error', err.message);
+        } catch (error) {
+            showNotification('error', error.data.message);
         } finally {
             setIsOpenModal(false);
             setPageLoading(false);

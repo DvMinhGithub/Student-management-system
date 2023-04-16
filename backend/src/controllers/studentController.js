@@ -10,9 +10,7 @@ module.exports = {
   },
   getDetailStudent: async (req, res, next) => {
     try {
-      const {studentId, role} = req.account;
-      console.log("🚀 ~ file: studentController.js:14 ~ getDetailStudent: ~ studentId, role:", studentId, role)
-      const { data } = await studentService.getDetailStudent({ id });
+      const { data } = await studentService.getDetailStudent(req.params.id);
       return res.status(200).json({ data });
     } catch (error) {
       next(error);

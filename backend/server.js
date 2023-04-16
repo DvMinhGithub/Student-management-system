@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const express = require("express");
 const cors = require("cors");
 const createError = require("http-errors");
+const morgan = require("morgan");
 
 const routes = require("./src/routes");
 const connectDatabase = require("./src/configs/db");
@@ -11,6 +12,7 @@ const connectDatabase = require("./src/configs/db");
 const PORT = process.env.PORT || 8080;
 const app = express();
 
+app.use(morgan("tiny"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());

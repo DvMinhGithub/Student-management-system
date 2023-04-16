@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import removeDiacritics from 'remove-diacritics';
 import { STORE } from '~/contants';
+import { accessTokenState } from '~/recoil/store/account';
 import { pageLoadingState } from '~/recoil/store/app';
 import { showNotification } from '~/utils';
 import callApi from '~/utils/api';
@@ -19,7 +20,7 @@ export default function AccountPage() {
     const [isOpenModal, setIsOpenModal] = useState(false);
 
     const [listAccount, setListAccount] = useState([]);
-    
+
     let [selectAccount, setSelectAccount] = useState(null);
 
     const [pagination, setPagination] = useState({
@@ -36,7 +37,7 @@ export default function AccountPage() {
             const res = await callApi({ method: 'get', url: '/accounts' });
             setListAccount(res.data);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
@@ -74,7 +75,7 @@ export default function AccountPage() {
             setIsOpenModal(false);
             showNotification('success', res.message);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
@@ -87,7 +88,7 @@ export default function AccountPage() {
             setListAccount((preAccounts) => preAccounts.filter((item) => item._id !== idDelete));
             showNotification('success', res.message);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
@@ -99,7 +100,7 @@ export default function AccountPage() {
             const res = await callApi({ method: 'put', url: `/accounts/${id}/resetPassword` });
             showNotification('success', res.message);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
@@ -108,7 +109,9 @@ export default function AccountPage() {
     const columns = [
         {
             title: 'Email',
-            dataIndex: ['student', 'email'],
+            render: (_, item) => {
+                return item[item.role].email;
+            },
             sorter: (a, b) => a.student.email.localeCompare(b.student.email),
             sortDirections: ['ascend', 'descend'],
         },
@@ -221,8 +224,9 @@ export default function AccountPage() {
                                 <Select
                                     value={selectAccount?.role}
                                     options={[
-                                        { value: 'student', label: 'Student' },
                                         { value: 'admin', label: 'Admin' },
+                                        { value: 'teacher', label: 'Giảng viên' },
+                                        { value: 'student', label: 'Sinh viên' },
                                     ]}
                                     onChange={(value) => setSelectAccount({ ...selectAccount, role: value })}
                                 />

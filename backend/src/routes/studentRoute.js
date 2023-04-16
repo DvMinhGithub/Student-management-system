@@ -6,7 +6,7 @@ const uploadFile = require("../middlewares/uploadFile");
 const { verifyToken } = require("../middlewares/verify");
 
 router.get("/", studentController.getAllStudents);
-router.get("/detail", verifyToken, studentController.getDetailStudent);
+router.get("/detail/:id", verifyToken, studentController.getDetailStudent);
 
 router.post("/", studentController.addStudent);
 router.post("/uploadExcel", uploadFile("file"), studentController.uploadExcel);

@@ -49,12 +49,12 @@ export default function LoginPage() {
             setAccessToken(res.token);
             setAccountId(res.data._id);
             setAccouuntRole(res.data.role);
-            setStudentId(res.data.student._id);
-            setStudentName(res.data.student.name);
-            setStudentAvatar(res.data.student.avatar);
+            setStudentId(res.data[res.data.role]._id);
+            setStudentName(res.data[res.data.role].name);
+            setStudentAvatar(res.data[res.data.role].avatar);
             showNotification('success', res.message);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
@@ -67,7 +67,7 @@ export default function LoginPage() {
             showNotification('success', res.message);
             setTabKey('signIn');
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }

@@ -37,7 +37,7 @@ export default function CoursePage() {
                 setPageLoading(false);
             })
             .catch((error) => {
-                showNotification('error', error.message);
+                showNotification('error', error.data.message);
                 setPageLoading(false);
             });
     };
@@ -50,7 +50,7 @@ export default function CoursePage() {
             setSemesters(res.data);
             setPageLoading(false);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
             setPageLoading(false);
         }
     };
@@ -70,7 +70,7 @@ export default function CoursePage() {
                 setPageLoading(false);
             })
             .catch((error) => {
-                showNotification('info', error.message);
+                showNotification('info', error.data.message);
                 setPageLoading(false);
             });
     };
@@ -83,7 +83,7 @@ export default function CoursePage() {
                 setPageLoading(false);
             })
             .catch((error) => {
-                showNotification('info', error.message);
+                showNotification('info', error.data.message);
                 setPageLoading(false);
             });
     };

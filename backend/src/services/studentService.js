@@ -31,7 +31,7 @@ module.exports = {
       next(error);
     }
   },
-  getDetailStudent: async ({ id }) => {
+  getDetailStudent: async (id) => {
     try {
       const student = await Student.findById(id);
       return { data: student };

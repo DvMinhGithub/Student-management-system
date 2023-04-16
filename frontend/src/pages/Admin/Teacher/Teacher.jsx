@@ -38,7 +38,7 @@ export default function TeacherPage() {
             const res = await callApi({ method: 'get', url: '/teachers' });
             setListTeachers(res.data);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
@@ -50,7 +50,7 @@ export default function TeacherPage() {
             const res = await callApi({ method: 'get', url: '/courses' });
             setListCourse(res.data);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
@@ -70,7 +70,7 @@ export default function TeacherPage() {
             setListTeachers([...listTeachers, ...res.data]);
             showNotification('success', res.message);
         } catch (error) {
-            showNotification('error', `Failed to upload Excel file: ${error.message}`);
+            showNotification('error', `Failed to upload Excel file: ${error.data.message}`);
         } finally {
             setPageLoading(false);
         }
@@ -122,7 +122,7 @@ export default function TeacherPage() {
             showNotification('success', res.message);
             setIsOpenModal(false);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
@@ -135,7 +135,7 @@ export default function TeacherPage() {
             setListTeachers((pre) => pre.filter((item) => item._id !== teacher._id));
             showNotification('success', res.message);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }

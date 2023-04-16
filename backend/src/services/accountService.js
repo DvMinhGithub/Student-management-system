@@ -3,7 +3,7 @@ const Account = require("../models/accountModel");
 const Admin = require("../models/adminModel");
 const Teacher = require("../models/teacherModel");
 const Student = require("../models/studentModel");
-
+const { getSchemaByRole } = require("../utils");
 const getUniqueCode = async (userSchema, charCode) => {
   let currentDate = new Date();
   let year = currentDate.getFullYear().toString().substr(-2);
@@ -45,28 +45,11 @@ module.exports = {
     const { username, password, email, role, name } = body;
 
     try {
-      let userSchema, charCode;
+      const { userSchema, charCode } = getSchemaByRole(role);
 
-      switch (role) {
-        case "admin":
-          userSchema = Admin;
-          charCode = "AD";
-          break;
-        case "student":
-          userSchema = Student;
-          charCode = "SV";
-          break;
-        case "teacher":
-          userSchema = Teacher;
-          charCode = "GV";
-          break;
-        default:
-          return { code: 400, message: "Role không hợp lệ" };
-      }
-
-      const { existUsername, existEmail } = Promise.all([
-        await Account.findOne({ username }),
-        await userSchema.findOne({ email }),
+      const [existUsername, existEmail] =await Promise.all([
+        Account.findOne({ username }),
+        userSchema.findOne({ email }),
       ]);
 
       if (existUsername)

@@ -66,7 +66,7 @@ module.exports = {
       const token = jwt.sign(
         {
           accountId: account._id,
-          [account.role + "Id"]: account[account.role]._id.toString(),
+          userId: account[account.role]._id.toString(),
           role: account.role,
         },
         process.env.JWT_SECRET,

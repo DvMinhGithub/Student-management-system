@@ -53,7 +53,7 @@ export default function CoursePage() {
             setCourses(res.data);
             setPageLoading(false);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
             setPageLoading(false);
         }
     };
@@ -66,7 +66,7 @@ export default function CoursePage() {
             setSemesters(res.data);
             setPageLoading(false);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
             setPageLoading(false);
         }
     };
@@ -118,7 +118,7 @@ export default function CoursePage() {
             showNotification('success', res.message);
             setIsOpenModal(false);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
@@ -131,7 +131,7 @@ export default function CoursePage() {
             setCourses((prevCourses) => prevCourses.filter((course) => course._id !== idDelete));
             showNotification('success', res.message);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
@@ -230,7 +230,7 @@ export default function CoursePage() {
             setCourses([...courses, ...res.data]);
             showNotification('success', res.message);
         } catch (error) {
-            showNotification('error', error.message);
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
