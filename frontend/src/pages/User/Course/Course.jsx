@@ -37,6 +37,7 @@ export default function CoursePage() {
                 setPageLoading(false);
             })
             .catch((error) => {
+                if (error.status === 401) setAccessToken('');
                 showNotification('error', error.data.message);
                 setPageLoading(false);
             });
@@ -50,6 +51,7 @@ export default function CoursePage() {
             setSemesters(res.data);
             setPageLoading(false);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
             setPageLoading(false);
         }

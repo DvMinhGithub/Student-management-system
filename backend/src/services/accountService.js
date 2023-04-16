@@ -75,10 +75,6 @@ module.exports = {
       const res = await Account.findByIdAndUpdate(newAccount._id, {
         $set: { [role]: newUser._id },
       });
-      console.log(
-        "🚀 ~ file: accountService.js:83 ~ createAccount: ~ res:",
-        res
-      );
 
       return {
         code: 201,

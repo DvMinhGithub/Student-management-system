@@ -2,14 +2,24 @@ const express = require("express");
 const router = express.Router();
 
 const semesterController = require("../controllers/semesterController");
+const { verifyToken, verifyAdmin } = require("../middlewares/verify");
 
-router.get("/", semesterController.getSemesters);
-router.get("/:id", semesterController.getSemesterById);
+router.get("/", verifyToken, semesterController.getSemesters);
+router.get(
+  "/:id",
+  verifyToken,
+  semesterController.getSemesterById
+);
 
-router.post("/", semesterController.createSemester);
+router.post("/", verifyToken, verifyAdmin, semesterController.createSemester);
 
-router.put("/:id", semesterController.updateSemester);
+router.put("/:id", verifyToken, verifyAdmin, semesterController.updateSemester);
 
-router.delete("/:id", semesterController.deleteSemester);
+router.delete(
+  "/:id",
+  verifyToken,
+  verifyAdmin,
+  semesterController.deleteSemester
+);
 
 module.exports = router;

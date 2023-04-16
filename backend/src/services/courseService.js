@@ -87,20 +87,6 @@ module.exports = {
       console.error(error);
     }
   },
-  getCourseByStudentId: async ({ id }) => {
-    try {
-      const student = await Student.findById(id).populate("courses");
-      return { data: student.courses };
-      // const courses = student.courses.map(async (c) => {
-      //   console.log("file: courseService.js:70 ~ c", c);
-      //   const course = await Course.findById(c.course);
-      //   return { id: c.course, name: course.courseName };
-      // });
-      // return { data: await Promise.all(courses) };
-    } catch (error) {
-      console.error(error);
-    }
-  },
   uploadExcel: async ({ file }) => {
     try {
       const workbook = xlsx.readFile(file.path);

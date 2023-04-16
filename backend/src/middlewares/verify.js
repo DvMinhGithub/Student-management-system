@@ -2,23 +2,21 @@ const jwt = require("jsonwebtoken");
 
 module.exports = {
   verifyToken: (req, res, next) => {
-    const token = req.headers.authorization;
+    const token = req.headers.authorization?.split(" ")[1];
     if (!token)
       return res.status(401).json({ message: "Khong tìm thấy token" });
+
     try {
-      const decoded = jwt.verify(token.split(" ")[1], "adminStudentManager");
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.account = decoded;
       next();
     } catch (error) {
-      console.error(error.message);
       return res.status(401).json({ message: "Phiên đăng nhập hết hạn" });
     }
   },
   verifyAdmin: (req, res, next) => {
-    if (req.account && req.account.role === "admin") {
-      next();
-    } else {
-      return res.status(403).json({ message: "Truy cập bị cấm" });
-    }
+    req.account && req.account.role === "admin"
+      ? next()
+      : res.status(403).json({ message: "Bạn không có quyền truy cập." });
   },
 };

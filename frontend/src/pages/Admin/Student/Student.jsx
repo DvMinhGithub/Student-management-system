@@ -11,6 +11,7 @@ import { pageLoadingState } from '~/recoil/store/app';
 import { showNotification } from '~/utils';
 import './Student.scss';
 import callApi from '~/utils/api';
+import { accessTokenState } from '~/recoil/store/account';
 
 export default function StudentPage() {
     const [searchValue, setSearchValue] = useState('');
@@ -28,21 +29,22 @@ export default function StudentPage() {
     });
 
     const [selectStudent, setSelectStudent] = useState({});
-
+    const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
     const [pageLoading, setPageLoading] = useRecoilState(pageLoadingState);
 
     const getStudents = async () => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'get', url: `/students` });
+            const res = await callApi({ method: 'get', url: `/students`, accessToken });
             setStudents(res.data);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
     };
-    useEffect(() => {
+    useEffect(() => { document.title = 'Sinh viên';
         getStudents();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -75,6 +77,7 @@ export default function StudentPage() {
                     method: 'put',
                     url: `/students/${selectStudent._id}`,
                     data: selectStudent,
+                    accessToken,
                 });
                 setStudents((preStudents) => {
                     const index = preStudents.findIndex((item) => item._id === selectStudent._id);
@@ -83,11 +86,12 @@ export default function StudentPage() {
                 });
                 showNotification('success', res.message);
             } else {
-                res = await callApi({ method: 'post', url: '/students', data: selectStudent });
+                res = await callApi({ method: 'post', url: '/students', data: selectStudent, accessToken });
                 setStudents([res.data, ...students]);
             }
             setIsOpenModal(false);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
@@ -97,10 +101,11 @@ export default function StudentPage() {
     const hanldeDeleteStudent = async (idDelete) => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'delete', url: `/students/${idDelete}` });
+            const res = await callApi({ method: 'delete', url: `/students/${idDelete}`, accessToken });
             setStudents((pre) => pre.filter((student) => student._id !== idDelete));
             showNotification('success', res.message);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
@@ -190,10 +195,11 @@ export default function StudentPage() {
         formData.append('file', file);
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'post', url: `/students/uploadExcel`, data: formData });
+            const res = await callApi({ method: 'post', url: `/students/uploadExcel`, data: formData, accessToken });
             setStudents((prevStudents) => [...prevStudents, ...res.data]);
             showNotification('success', res.message);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);

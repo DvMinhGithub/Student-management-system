@@ -2,12 +2,12 @@ import { ExclamationCircleFilled, LoginOutlined, SecurityScanOutlined, UserOutli
 import { Avatar, Breadcrumb, Dropdown, Form, Input, Layout, Menu, Modal, Spin, notification, theme } from 'antd';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import callApi from '~/utils/api';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { accessTokenState, accountIdState } from '~/recoil/store/account';
 import { pageLoadingState } from '~/recoil/store/app';
 import { studentAvatarState, studentNameState } from '~/recoil/store/student';
 import { showNotification } from '~/utils';
+import callApi from '~/utils/api';
 import './LayoutPage.scss';
 const { Header, Sider, Content } = Layout;
 
@@ -49,7 +49,7 @@ export default function PageLayout({ menuItems }) {
 
     const accountId = useRecoilValue(accountIdState);
 
-    const setAccessToken = useSetRecoilState(accessTokenState);
+    const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
 
     const [pageLoading, setPageLoading] = useRecoilState(pageLoadingState);
 
@@ -126,9 +126,11 @@ export default function PageLayout({ menuItems }) {
                 method: 'PUT',
                 url: `/accounts/changePassword/${accountId}`,
                 data: changePassword,
+                accessToken,
             });
             showNotification('success', res.message);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setIsOpenModal(false);

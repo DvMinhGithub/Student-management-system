@@ -19,7 +19,6 @@ module.exports = {
   },
   getDetailAccount: async (req, res, next) => {
     try {
-      console.log(req.account)
       const { data } = await accountService.getDetailAccount(req.params.id);
       return res.json({ data });
     } catch (error) {

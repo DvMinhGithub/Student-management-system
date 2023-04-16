@@ -12,7 +12,11 @@ const connectDatabase = require("./src/configs/db");
 const PORT = process.env.PORT || 8080;
 const app = express();
 
-app.use(morgan("tiny"));
+morgan("combined", {
+  skip: function (req, res) {
+    return res.statusCode < 400;
+  },
+});
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());

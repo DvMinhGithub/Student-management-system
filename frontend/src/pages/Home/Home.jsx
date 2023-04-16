@@ -28,6 +28,7 @@ export default function HomePage() {
             setStudentName(data.name);
         } catch (error) {
             if (error.status === 401) setAccessToken('');
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
@@ -71,6 +72,7 @@ export default function HomePage() {
                 showNotification('success', res.message);
             })
             .catch((error) => {
+                if (error.status === 401) setAccessToken('');
                 showNotification('error', error.data.message);
             })
             .finally(() => {
@@ -141,7 +143,7 @@ export default function HomePage() {
                                     <DatePicker
                                         placeholder="Ngày sinh"
                                         style={{ width: '100%' }}
-                                        format="DD-MM-YYYY"
+                                        // format="DD-MM-YYYY"
                                         name="dateOfBirth"
                                         value={dayjs(userInfo?.dateOfBirth)}
                                         onChange={(_, dateString) => {

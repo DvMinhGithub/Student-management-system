@@ -11,6 +11,7 @@ import { pageLoadingState } from '~/recoil/store/app';
 import { showNotification } from '~/utils';
 import callApi from '~/utils/api';
 import './Semester.scss';
+import { accessTokenState } from '~/recoil/store/account';
 
 export default function SemesterPage() {
     const [isOpenModal, setIsOpenModal] = useState(false);
@@ -28,22 +29,23 @@ export default function SemesterPage() {
     const [searchValue, setSearchValue] = useState('');
 
     const [selectedSemester, setSelectedSemester] = useState(null);
-
+    const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
     const [pageLoading, setPageLoading] = useRecoilState(pageLoadingState);
 
     const getSemesters = async () => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'get', url: '/semesters' });
+            const res = await callApi({ method: 'get', url: '/semesters', accessToken });
             setSemesters(res.data);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
     };
 
-    useEffect(() => {
+    useEffect(() => { document.title = 'Học kỳ';
         getSemesters();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -68,6 +70,7 @@ export default function SemesterPage() {
                     method: 'put',
                     url: `/semesters/${selectedSemester._id}`,
                     data: selectedSemester,
+                    accessToken,
                 });
                 setSemesters((preSemester) => {
                     const index = preSemester.findIndex((item) => item._id === selectedSemester._id);
@@ -75,12 +78,13 @@ export default function SemesterPage() {
                     return preSemester;
                 });
             } else {
-                res = await callApi({ method: 'post', url: '/semesters', data: selectedSemester });
+                res = await callApi({ method: 'post', url: '/semesters', data: selectedSemester, accessToken });
                 setSemesters([...semesters, res.data]);
             }
             showNotification('success', res.message);
             setIsOpenModal(false);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
@@ -90,10 +94,11 @@ export default function SemesterPage() {
     const handleDelete = async (id) => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'delete', url: `/semesters/${id}` });
+            const res = await callApi({ method: 'delete', url: `/semesters/${id}`, accessToken });
             setSemesters((pre) => pre.filter((student) => student._id !== id));
             showNotification('success', res.message);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);

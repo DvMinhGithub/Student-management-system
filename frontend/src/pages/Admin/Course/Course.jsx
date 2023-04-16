@@ -24,6 +24,7 @@ import { pageLoadingState } from '~/recoil/store/app';
 import { showNotification } from '~/utils';
 import callApi from '~/utils/api';
 import './Course.scss';
+import { accessTokenState } from '~/recoil/store/account';
 
 export default function CoursePage() {
     const [searchValue, setSearchValue] = useState({ nameCourse: '', nameSemester: '' });
@@ -43,16 +44,17 @@ export default function CoursePage() {
     const [courses, setCourses] = useState([]);
 
     const [semesters, setSemesters] = useState([]);
-
+    const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
     const [pageLoading, setPageLoading] = useRecoilState(pageLoadingState);
 
     const getCourses = async () => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'get', url: '/courses' });
+            const res = await callApi({ method: 'get', url: '/courses', accessToken });
             setCourses(res.data);
             setPageLoading(false);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
             setPageLoading(false);
         }
@@ -62,15 +64,17 @@ export default function CoursePage() {
         try {
             setPageLoading(true);
 
-            const res = await callApi({ method: 'get', url: '/semesters' });
+            const res = await callApi({ method: 'get', url: '/semesters', accessToken });
             setSemesters(res.data);
             setPageLoading(false);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
             setPageLoading(false);
         }
     };
     useEffect(() => {
+         document.title = 'Môn học';
         getCourses();
         getSemesters();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -102,7 +106,12 @@ export default function CoursePage() {
             if (isEdit) {
                 // if id is passed in, it means update course
                 selectedCourse.semesters = selectedCourse.semesters.map((semester) => semester._id);
-                res = await callApi({ method: 'put', url: `/courses/${selectedCourse._id}`, data: selectedCourse });
+                res = await callApi({
+                    method: 'put',
+                    url: `/courses/${selectedCourse._id}`,
+                    data: selectedCourse,
+                    accessToken,
+                });
 
                 setCourses((prevCourses) => {
                     const index = prevCourses.findIndex((course) => course._id === selectedCourse._id);
@@ -110,7 +119,7 @@ export default function CoursePage() {
                     return prevCourses;
                 });
             } else {
-                res = await callApi({ method: 'post', url: '/courses', data: selectedCourse });
+                res = await callApi({ method: 'post', url: '/courses', data: selectedCourse, accessToken });
 
                 setCourses([...courses, ...res.data]);
             }
@@ -118,6 +127,7 @@ export default function CoursePage() {
             showNotification('success', res.message);
             setIsOpenModal(false);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
@@ -127,10 +137,11 @@ export default function CoursePage() {
     const handleDelete = async (idDelete) => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'delete', url: `/courses/${idDelete}` });
+            const res = await callApi({ method: 'delete', url: `/courses/${idDelete}`, accessToken });
             setCourses((prevCourses) => prevCourses.filter((course) => course._id !== idDelete));
             showNotification('success', res.message);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
@@ -226,10 +237,11 @@ export default function CoursePage() {
         formData.append('file', file);
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'post', url: `courses/uploadExcel`, data: formData });
+            const res = await callApi({ method: 'post', url: `courses/uploadExcel`, data: formData, accessToken });
             setCourses([...courses, ...res.data]);
             showNotification('success', res.message);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);

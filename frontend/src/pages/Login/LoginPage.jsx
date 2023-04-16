@@ -54,6 +54,7 @@ export default function LoginPage() {
             setStudentAvatar(res.data[res.data.role].avatar);
             showNotification('success', res.message);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
@@ -67,6 +68,7 @@ export default function LoginPage() {
             showNotification('success', res.message);
             setTabKey('signIn');
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);

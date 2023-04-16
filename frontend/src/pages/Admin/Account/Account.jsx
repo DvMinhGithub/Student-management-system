@@ -29,20 +29,23 @@ export default function AccountPage() {
         onChange: (e) => setPagination({ ...pagination, current: e }),
     });
 
+    const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
     const [pageLoading, setPageLoading] = useRecoilState(pageLoadingState);
 
     const getAccounts = async () => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'get', url: '/accounts' });
+            const res = await callApi({ method: 'get', url: '/accounts', accessToken });
             setListAccount(res.data);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
     };
     useEffect(() => {
+        document.title = 'Tài khoản'
         getAccounts();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -66,7 +69,7 @@ export default function AccountPage() {
     const handleOk = async () => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'put', url: `/accounts/${selectAccount._id}`, data: selectAccount });
+            const res = await callApi({ method: 'put', url: `/accounts/${selectAccount._id}`, data: selectAccount, accessToken });
             setListAccount((preAccounts) => {
                 const index = preAccounts.findIndex((item) => item._id === selectAccount._id);
                 preAccounts[index] = { ...preAccounts[index], ...selectAccount };
@@ -75,6 +78,7 @@ export default function AccountPage() {
             setIsOpenModal(false);
             showNotification('success', res.message);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
@@ -84,10 +88,11 @@ export default function AccountPage() {
     const hanndleDelete = async (idDelete) => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'delete', url: `/accounts/${idDelete}` });
+            const res = await callApi({ method: 'delete', url: `/accounts/${idDelete}`, accessToken });
             setListAccount((preAccounts) => preAccounts.filter((item) => item._id !== idDelete));
             showNotification('success', res.message);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
@@ -97,9 +102,10 @@ export default function AccountPage() {
     const handleResetPassword = async (id) => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'put', url: `/accounts/${id}/resetPassword` });
+            const res = await callApi({ method: 'put', url: `/accounts/${id}/resetPassword`, accessToken });
             showNotification('success', res.message);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);

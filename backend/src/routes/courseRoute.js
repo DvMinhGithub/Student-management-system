@@ -3,14 +3,26 @@ const router = express.Router();
 
 const courseController = require("../controllers/courseController");
 const uploadFile = require("../middlewares/uploadFile");
+const { verifyToken, verifyAdmin } = require("../middlewares/verify");
 
-router.get("/", courseController.getAllCourses);
-router.get("/:id", courseController.getCourseByStudentId);
+router.get("/", verifyToken, courseController.getAllCourses);
 
-router.post("/", courseController.createCourse);
-router.post("/uploadExcel", uploadFile("file"), courseController.uploadExcel);
+router.post("/", verifyToken, verifyAdmin, courseController.createCourse);
+router.post(
+  "/uploadExcel",
+  uploadFile("file"),
+  verifyToken,
+  verifyAdmin,
+  courseController.uploadExcel
+);
 
-router.put("/:id", courseController.updateCourseById);
+router.put("/:id", verifyToken, verifyAdmin, courseController.updateCourseById);
 
-router.delete("/:id", courseController.deleteCourseById);
+router.delete(
+  "/:id",
+  verifyToken,
+  verifyAdmin,
+  courseController.deleteCourseById
+);
+
 module.exports = router;

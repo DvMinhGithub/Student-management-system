@@ -10,6 +10,7 @@ import { pageLoadingState } from '~/recoil/store/app';
 import { showNotification } from '~/utils';
 import './Teacher.scss';
 import callApi from '~/utils/api';
+import { accessTokenState } from '~/recoil/store/account';
 
 export default function TeacherPage() {
     const [searchValue, setSearchValue] = useState('');
@@ -30,14 +31,16 @@ export default function TeacherPage() {
 
     const [listCourse, setListCourse] = useState([]);
 
+    const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
     const [pageLoading, setPageLoading] = useRecoilState(pageLoadingState);
 
     const getAllTeachers = async () => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'get', url: '/teachers' });
+            const res = await callApi({ method: 'get', url: '/teachers', accessToken });
             setListTeachers(res.data);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
@@ -47,15 +50,17 @@ export default function TeacherPage() {
     const getAllCourses = async () => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'get', url: '/courses' });
+            const res = await callApi({ method: 'get', url: '/courses', accessToken });
             setListCourse(res.data);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
     };
     useEffect(() => {
+        document.title = 'Giảng viên';
         getAllTeachers();
         getAllCourses();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -66,7 +71,7 @@ export default function TeacherPage() {
         formData.append('file', file);
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'post', url: `teachers/uploadExcel`, data: formData });
+            const res = await callApi({ method: 'post', url: `teachers/uploadExcel`, data: formData, accessToken });
             setListTeachers([...listTeachers, ...res.data]);
             showNotification('success', res.message);
         } catch (error) {
@@ -109,6 +114,7 @@ export default function TeacherPage() {
                     method: 'put',
                     url: `/teachers/${selectedTeacher._id}`,
                     data: teacherToUpdate,
+                    accessToken,
                 });
                 setListTeachers((prevList) => {
                     const index = prevList.findIndex((teacher) => teacher._id === selectedTeacher._id);
@@ -116,12 +122,13 @@ export default function TeacherPage() {
                     return prevList;
                 });
             } else {
-                res = await callApi({ method: 'POST', url: '/teachers', data: selectedTeacher });
+                res = await callApi({ method: 'POST', url: '/teachers', data: selectedTeacher, accessToken });
                 setListTeachers((prevListTeachers) => [...prevListTeachers, res.data]);
             }
             showNotification('success', res.message);
             setIsOpenModal(false);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
@@ -131,10 +138,11 @@ export default function TeacherPage() {
     const handleDeleteTeacher = async (teacher) => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'delete', url: `/teachers/${teacher._id}` });
+            const res = await callApi({ method: 'delete', url: `/teachers/${teacher._id}`, accessToken });
             setListTeachers((pre) => pre.filter((item) => item._id !== teacher._id));
             showNotification('success', res.message);
         } catch (error) {
+            if (error.status === 401) setAccessToken('');
             showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
