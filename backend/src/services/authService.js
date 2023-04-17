@@ -35,11 +35,15 @@ module.exports = {
         password: hashedPassword,
       });
 
-      await Student.create({
+      const newStudent = await Student.create({
         code: await getUniqueCode(),
         name,
         email,
         account: newAccount._id,
+      });
+
+      await Account.findByIdAndUpdate(newAccount._id, {
+        $set: { student: newStudent._id },
       });
 
       return { code: 201, message: "Đăng ký tài khoản thành công" };
@@ -71,7 +75,7 @@ module.exports = {
         },
         process.env.JWT_SECRET,
         {
-          expiresIn: "5m",
+          expiresIn: "15m",
         }
       );
       return {

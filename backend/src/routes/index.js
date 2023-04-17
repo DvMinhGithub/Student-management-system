@@ -18,3 +18,4 @@ routes.use("/api/v1/teachers", teacherRouter);
 routes.use("/api/v1/admins", adminRouter);
 
 module.exports = routes;
+

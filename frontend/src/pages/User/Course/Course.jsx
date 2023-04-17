@@ -9,6 +9,7 @@ import { studentIdState } from '~/recoil/store/student';
 import { showNotification } from '~/utils';
 import callApi from '~/utils/api';
 import './Course.scss';
+import { accessTokenState } from '~/recoil/store/account';
 
 export default function CoursePage() {
     const [searchValue, setSearchValue] = useState({ nameSemester: '', nameCourse: '' });
@@ -27,11 +28,12 @@ export default function CoursePage() {
 
     const studentId = useRecoilValue(studentIdState);
 
+    const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
     const [pageLoading, setPageLoading] = useRecoilState(pageLoadingState);
 
     const getCourses = () => {
         setPageLoading(true);
-        callApi({ method: 'get', url: '/courses' })
+        callApi({ method: 'get', url: '/courses', accessToken })
             .then((res) => {
                 setCourses(res.data);
                 setPageLoading(false);
@@ -47,7 +49,7 @@ export default function CoursePage() {
         try {
             setPageLoading(true);
 
-            const res = await callApi({ method: 'get', url: '/semesters' });
+            const res = await callApi({ method: 'get', url: '/semesters', accessToken });
             setSemesters(res.data);
             setPageLoading(false);
         } catch (error) {
@@ -66,7 +68,7 @@ export default function CoursePage() {
 
     const handleRegisCourse = (courseId) => {
         setPageLoading(true);
-        callApi({ method: 'put', url: `/students/register/${studentId}`, data: { courseId: courseId } })
+        callApi({ method: 'put', url: `/students/register/${studentId}`, data: { courseId: courseId }, accessToken })
             .then((res) => {
                 showNotification('success', res.message);
                 setPageLoading(false);
@@ -79,7 +81,12 @@ export default function CoursePage() {
 
     const handleCancelRegisCourse = (courseId) => {
         setPageLoading(true);
-        callApi({ method: 'put', url: `/students/cancelRegister/${studentId}`, data: { courseId: courseId } })
+        callApi({
+            method: 'put',
+            url: `/students/cancelRegister/${studentId}`,
+            data: { courseId: courseId },
+            accessToken,
+        })
             .then((res) => {
                 showNotification('success', res.message);
                 setPageLoading(false);

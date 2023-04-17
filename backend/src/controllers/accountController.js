@@ -27,11 +27,10 @@ module.exports = {
   },
   updateAccountById: async (req, res, next) => {
     try {
-      const id = req.params.id;
-      const { code, message, data } = await accountService.updateAccountById({
-        id,
-        body: req.body,
-      });
+      const { code, message, data } = await accountService.updateAccountById(
+        req.params.id,
+        req.body
+      );
       return res.status(code).json({ message, data });
     } catch (error) {
       next(error);

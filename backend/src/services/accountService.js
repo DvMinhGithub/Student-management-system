@@ -1,9 +1,11 @@
 const bcrypt = require("bcrypt");
+
 const Account = require("../models/accountModel");
 const Admin = require("../models/adminModel");
 const Teacher = require("../models/teacherModel");
 const Student = require("../models/studentModel");
 const { getSchemaByRole } = require("../utils");
+
 const getUniqueCode = async (userSchema, charCode) => {
   let currentDate = new Date();
   let year = currentDate.getFullYear().toString().substr(-2);
@@ -47,7 +49,7 @@ module.exports = {
     try {
       const { userSchema, charCode } = getSchemaByRole(role);
 
-      const [existUsername, existEmail] =await Promise.all([
+      const [existUsername, existEmail] = await Promise.all([
         Account.findOne({ username }),
         userSchema.findOne({ email }),
       ]);
