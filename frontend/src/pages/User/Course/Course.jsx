@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import removeDiacritics from 'remove-diacritics';
 import { STORE } from '~/contants';
+import { accessTokenState } from '~/recoil/store/account';
 import { pageLoadingState } from '~/recoil/store/app';
 import { studentIdState } from '~/recoil/store/student';
 import { showNotification } from '~/utils';
-import callApi from '~/utils/api';
+import api from '~/utils/api2';
 import './Course.scss';
-import { accessTokenState } from '~/recoil/store/account';
 
 export default function CoursePage() {
     const [searchValue, setSearchValue] = useState({ nameSemester: '', nameCourse: '' });
@@ -31,25 +31,24 @@ export default function CoursePage() {
     const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
     const [pageLoading, setPageLoading] = useRecoilState(pageLoadingState);
 
-    const getCourses = () => {
-        setPageLoading(true);
-        callApi({ method: 'get', url: '/courses', accessToken })
-            .then((res) => {
-                setCourses(res.data);
-                setPageLoading(false);
-            })
-            .catch((error) => {
-                if (error.status === 401) setAccessToken('');
-                showNotification('error', error.data.message);
-                setPageLoading(false);
-            });
+    const getCourses = async () => {
+        try {
+            setPageLoading(true);
+            const res = await api.get('/courses', accessToken);
+            setCourses(res);
+        } catch (error) {
+            if (error.status === 401) setAccessToken('');
+            showNotification('error', error.data.message);
+        } finally {
+            setPageLoading(false);
+        }
     };
 
     const getSemesters = async () => {
         try {
             setPageLoading(true);
 
-            const res = await callApi({ method: 'get', url: '/semesters', accessToken });
+            const res = await api.get('/semesters', accessToken);
             setSemesters(res.data);
             setPageLoading(false);
         } catch (error) {
@@ -66,35 +65,28 @@ export default function CoursePage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [checkbox]);
 
-    const handleRegisCourse = (courseId) => {
-        setPageLoading(true);
-        callApi({ method: 'put', url: `/students/register/${studentId}`, data: { courseId: courseId }, accessToken })
-            .then((res) => {
-                showNotification('success', res.message);
-                setPageLoading(false);
-            })
-            .catch((error) => {
-                showNotification('info', error.data.message);
-                setPageLoading(false);
-            });
+    const handleRegisCourse = async (courseId) => {
+        try {
+            setPageLoading(true);
+            const res = await api.put(`/students/register/${studentId}`, { courseId }, accessToken);
+            showNotification('success', res.message);
+        } catch (error) {
+            showNotification('info', error.data.message);
+        } finally {
+            setPageLoading(false);
+        }
     };
 
-    const handleCancelRegisCourse = (courseId) => {
-        setPageLoading(true);
-        callApi({
-            method: 'put',
-            url: `/students/cancelRegister/${studentId}`,
-            data: { courseId: courseId },
-            accessToken,
-        })
-            .then((res) => {
-                showNotification('success', res.message);
-                setPageLoading(false);
-            })
-            .catch((error) => {
-                showNotification('info', error.data.message);
-                setPageLoading(false);
-            });
+    const handleCancelRegisCourse = async (courseId) => {
+        try {
+            setPageLoading(true);
+            const res = await api.put(`/students/cancelRegister/${studentId}`, { courseId }, accessToken);
+            showNotification('success', res.message);
+        } catch (error) {
+            showNotification('info', error.data.message);
+        } finally {
+            setPageLoading(false);
+        }
     };
 
     const handleDelete = (courseId) => {

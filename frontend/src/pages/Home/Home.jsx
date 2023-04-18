@@ -7,12 +7,12 @@ import { accessTokenState } from '~/recoil/store/account';
 import { pageLoadingState } from '~/recoil/store/app';
 import { studentAvatarState, studentNameState } from '~/recoil/store/student';
 import { showNotification } from '~/utils';
-import callApi from '~/utils/api';
+import api from '~/utils/api2';
 import './Home.scss';
 
 export default function HomePage() {
     const [userInfo, setUserInfo] = useState({});
-    const [avatar, setAvatar] = useState(null);
+    const [avatar, setAvatar] = useState({});
     const [previewImg, setPreviewImg] = useState();
     const setStudentName = useSetRecoilState(studentNameState);
     const setStudentAvatar = useSetRecoilState(studentAvatarState);
@@ -23,7 +23,7 @@ export default function HomePage() {
         let { role, userId } = jwtDecodeb(accessToken);
         setPageLoading(true);
         try {
-            const { data } = await callApi({ method: 'GET', url: `/${role}s/detail/${userId}`, accessToken });
+            const { data } = await api.get(`/${role}s/detail/${userId}`, accessToken);
             setUserInfo(data);
             setStudentName(data.name);
         } catch (error) {
@@ -61,23 +61,24 @@ export default function HomePage() {
         if (avatar) {
             data.append('avatar', avatar);
         }
-        const { courses, ...updatedUserInfo } = userInfo;
-        Object.keys(updatedUserInfo).forEach((key) => {
-            data.append(key, updatedUserInfo[key]);
+        
+        const updatedUserInfo = { ...userInfo };
+        delete updatedUserInfo.courses;
+        Object.entries(updatedUserInfo).forEach(([key, value]) => {
+            data.append(key, value);
         });
-        callApi({ method: 'PUT', url: `/${role}s/${userInfo._id}`, data, accessToken })
-            .then((res) => {
-                setStudentName(res.data.name);
-                setStudentAvatar(res.data.avatar);
-                showNotification('success', res.message);
-            })
-            .catch((error) => {
-                if (error.status === 401) setAccessToken('');
-                showNotification('error', error.data.message);
-            })
-            .finally(() => {
-                setPageLoading(false);
-            });
+
+        try {
+            const res = await api.put(`/${role}s/${userInfo._id}`, data, accessToken);
+            setStudentName(res.data.name);
+            setStudentAvatar(res.data.avatar);
+            showNotification('success', res.message);
+        } catch (error) {
+            if (error.status === 401) setAccessToken('');
+            showNotification('error', error.data.message);
+        } finally {
+            setPageLoading(false);
+        }
     };
 
     return (

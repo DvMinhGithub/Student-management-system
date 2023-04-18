@@ -9,7 +9,7 @@ import { STORE } from '~/contants';
 import { accessTokenState } from '~/recoil/store/account';
 import { pageLoadingState } from '~/recoil/store/app';
 import { showNotification } from '~/utils';
-import callApi from '~/utils/api';
+import api from '~/utils/api2';
 import './Account.scss';
 
 export default function AccountPage() {
@@ -35,7 +35,7 @@ export default function AccountPage() {
     const getAccounts = async () => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'get', url: '/accounts', accessToken });
+            const res = await api.get('/accounts', accessToken);
             setListAccount(res.data);
         } catch (error) {
             if (error.status === 401) setAccessToken('');
@@ -45,7 +45,7 @@ export default function AccountPage() {
         }
     };
     useEffect(() => {
-        document.title = 'Tài khoản'
+        document.title = 'Tài khoản';
         getAccounts();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -69,7 +69,7 @@ export default function AccountPage() {
     const handleOk = async () => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'put', url: `/accounts/${selectAccount._id}`, data: selectAccount, accessToken });
+            const res = await api.put(`/accounts/${selectAccount._id}`, selectAccount, accessToken);
             setListAccount((preAccounts) => {
                 const index = preAccounts.findIndex((item) => item._id === selectAccount._id);
                 preAccounts[index] = { ...preAccounts[index], ...selectAccount };
@@ -88,7 +88,7 @@ export default function AccountPage() {
     const hanndleDelete = async (idDelete) => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'delete', url: `/accounts/${idDelete}`, accessToken });
+            const res = await api.delete(`/accounts/${idDelete}`, accessToken);
             setListAccount((preAccounts) => preAccounts.filter((item) => item._id !== idDelete));
             showNotification('success', res.message);
         } catch (error) {
@@ -102,7 +102,7 @@ export default function AccountPage() {
     const handleResetPassword = async (id) => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'put', url: `/accounts/${id}/resetPassword`, accessToken });
+             const res = await api.put(`/accounts/${id}/resetPassword`, accessToken)
             showNotification('success', res.message);
         } catch (error) {
             if (error.status === 401) setAccessToken('');

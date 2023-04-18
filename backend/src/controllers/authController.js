@@ -10,6 +10,7 @@ module.exports = {
   },
   login: async (req, res, next) => {
     try {
+    
       const { code, ...rest } = await authService.login(req.body);
       return res.status(code).json({ ...rest });
     } catch (error) {

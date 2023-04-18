@@ -6,11 +6,11 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import removeDiacritics from 'remove-diacritics';
 import { STORE } from '~/contants';
+import { accessTokenState } from '~/recoil/store/account';
 import { pageLoadingState } from '~/recoil/store/app';
 import { showNotification } from '~/utils';
+import api from '~/utils/api2';
 import './Teacher.scss';
-import callApi from '~/utils/api';
-import { accessTokenState } from '~/recoil/store/account';
 
 export default function TeacherPage() {
     const [searchValue, setSearchValue] = useState('');
@@ -37,7 +37,7 @@ export default function TeacherPage() {
     const getAllTeachers = async () => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'get', url: '/teachers', accessToken });
+            const res = await api.get('/teachers', accessToken);
             setListTeachers(res.data);
         } catch (error) {
             if (error.status === 401) setAccessToken('');
@@ -50,7 +50,7 @@ export default function TeacherPage() {
     const getAllCourses = async () => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'get', url: '/courses', accessToken });
+            const res = await api.get('/courses', accessToken);
             setListCourse(res.data);
         } catch (error) {
             if (error.status === 401) setAccessToken('');
@@ -71,7 +71,7 @@ export default function TeacherPage() {
         formData.append('file', file);
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'post', url: `teachers/uploadExcel`, data: formData, accessToken });
+            const res = await api.post(`teachers/uploadExcel`, formData, accessToken);
             setListTeachers([...listTeachers, ...res.data]);
             showNotification('success', res.message);
         } catch (error) {
@@ -110,19 +110,14 @@ export default function TeacherPage() {
         try {
             let res;
             if (isEdit) {
-                res = await callApi({
-                    method: 'put',
-                    url: `/teachers/${selectedTeacher._id}`,
-                    data: teacherToUpdate,
-                    accessToken,
-                });
+                res = await api.put(`/teachers/${selectedTeacher._id}`, teacherToUpdate, accessToken);
                 setListTeachers((prevList) => {
                     const index = prevList.findIndex((teacher) => teacher._id === selectedTeacher._id);
                     prevList[index] = { ...prevList[index], ...res.data };
                     return prevList;
                 });
             } else {
-                res = await callApi({ method: 'POST', url: '/teachers', data: selectedTeacher, accessToken });
+                res = await api.post('/teachers', selectedTeacher, accessToken);
                 setListTeachers((prevListTeachers) => [...prevListTeachers, res.data]);
             }
             showNotification('success', res.message);
@@ -138,7 +133,7 @@ export default function TeacherPage() {
     const handleDeleteTeacher = async (teacher) => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'delete', url: `/teachers/${teacher._id}`, accessToken });
+            const res = await api.delete(`/teachers/${teacher._id}`, accessToken);
             setListTeachers((pre) => pre.filter((item) => item._id !== teacher._id));
             showNotification('success', res.message);
         } catch (error) {

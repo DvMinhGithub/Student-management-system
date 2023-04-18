@@ -1,5 +1,6 @@
 import { atom } from 'recoil';
 import { persistAtom } from '../persist';
+import { useRecoilValue } from 'recoil';
 
 export const accessTokenState = atom({
     key: '@accessToken',
@@ -16,3 +17,4 @@ export const accountRoleState = atom({
     default: '',
     effects_UNSTABLE: [persistAtom],
 });
+

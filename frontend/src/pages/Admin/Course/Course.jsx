@@ -20,11 +20,11 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import removeDiacritics from 'remove-diacritics';
 import { STORE } from '~/contants';
+import { accessTokenState } from '~/recoil/store/account';
 import { pageLoadingState } from '~/recoil/store/app';
 import { showNotification } from '~/utils';
-import callApi from '~/utils/api';
+import api from '~/utils/api2';
 import './Course.scss';
-import { accessTokenState } from '~/recoil/store/account';
 
 export default function CoursePage() {
     const [searchValue, setSearchValue] = useState({ nameCourse: '', nameSemester: '' });
@@ -50,7 +50,7 @@ export default function CoursePage() {
     const getCourses = async () => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'get', url: '/courses', accessToken });
+            const res = await api.get('/courses', accessToken);
             setCourses(res.data);
             setPageLoading(false);
         } catch (error) {
@@ -63,8 +63,7 @@ export default function CoursePage() {
     const getSemesters = async () => {
         try {
             setPageLoading(true);
-
-            const res = await callApi({ method: 'get', url: '/semesters', accessToken });
+            const res = await api.get('/semesters', accessToken);
             setSemesters(res.data);
             setPageLoading(false);
         } catch (error) {
@@ -74,7 +73,7 @@ export default function CoursePage() {
         }
     };
     useEffect(() => {
-         document.title = 'Môn học';
+        document.title = 'Môn học';
         getCourses();
         getSemesters();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -106,12 +105,8 @@ export default function CoursePage() {
             if (isEdit) {
                 // if id is passed in, it means update course
                 selectedCourse.semesters = selectedCourse.semesters.map((semester) => semester._id);
-                res = await callApi({
-                    method: 'put',
-                    url: `/courses/${selectedCourse._id}`,
-                    data: selectedCourse,
-                    accessToken,
-                });
+
+                res = await api.put(`/courses/${selectedCourse._id}`, selectedCourse, accessToken);
 
                 setCourses((prevCourses) => {
                     const index = prevCourses.findIndex((course) => course._id === selectedCourse._id);
@@ -119,9 +114,8 @@ export default function CoursePage() {
                     return prevCourses;
                 });
             } else {
-                res = await callApi({ method: 'post', url: '/courses', data: selectedCourse, accessToken });
-
-                setCourses([...courses, ...res.data]);
+                res = await api.post('/courses', selectedCourse, accessToken);
+                setCourses([...courses, res.data]);
             }
 
             showNotification('success', res.message);
@@ -137,7 +131,7 @@ export default function CoursePage() {
     const handleDelete = async (idDelete) => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'delete', url: `/courses/${idDelete}`, accessToken });
+            const res = await api.delete(`/courses/${idDelete}`, accessToken);
             setCourses((prevCourses) => prevCourses.filter((course) => course._id !== idDelete));
             showNotification('success', res.message);
         } catch (error) {
@@ -237,8 +231,8 @@ export default function CoursePage() {
         formData.append('file', file);
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'post', url: `courses/uploadExcel`, data: formData, accessToken });
-            setCourses([...courses, ...res.data]);
+             const res = await api.post(`courses/uploadExcel`,  formData, accessToken);
+            setCourses([...courses, ...res.data])
             showNotification('success', res.message);
         } catch (error) {
             if (error.status === 401) setAccessToken('');

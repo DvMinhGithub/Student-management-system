@@ -13,16 +13,14 @@ const PORT = process.env.PORT || 8080;
 const app = express();
 
 app.use(
-  morgan("dev", {
-    skip: function (req, res) {
-      return res.statusCode < 400;
-    },
-  })
+  morgan("dev")
 );
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
+
 app.use("/", express.static("public"));
+
 app.use(routes);
 
 connectDatabase();

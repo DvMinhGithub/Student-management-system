@@ -9,8 +9,8 @@ router.get("/detail/:id", verifyToken, adminController.getDetailAdmin);
 
 router.put(
   "/:id",
-  verifyToken,
-  uploadFile("avatar"),
+  // verifyToken,
+  uploadFile('avatar'),
   adminController.updateAdmin
 );
 

@@ -7,6 +7,7 @@ import { pageLoadingState } from '~/recoil/store/app';
 import { studentAvatarState, studentIdState, studentNameState } from '~/recoil/store/student';
 import { showNotification } from '~/utils';
 import './LoginPage.scss';
+import api from '~/utils/api2';
 
 export default function LoginPage() {
     const setAccessToken = useSetRecoilState(accessTokenState);
@@ -45,7 +46,8 @@ export default function LoginPage() {
     const handleLogin = async () => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'post', url: '/auth/login', data: accountLogin });
+            // const res = await callApi({ method: 'post', url: '/auth/login', data: accountLogin });
+            const res = await api.post('/auth/login', accountLogin, '');
             setAccessToken(res.token);
             setAccountId(res.data._id);
             setAccouuntRole(res.data.role);
@@ -55,7 +57,7 @@ export default function LoginPage() {
             showNotification('success', res.message);
         } catch (error) {
             if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            // showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }

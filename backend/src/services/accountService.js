@@ -87,7 +87,7 @@ module.exports = {
       return { code: 500, message: "Lỗi hệ thống, vui lòng thử lại sau." };
     }
   },
-  updateAccountById: async ({ id, body }) => {
+  updateAccountById: async ( id, body ) => {
     try {
       const account = await Account.findByIdAndUpdate(id, body, { new: true });
       if (!account) return { code: 404, message: "Không tìm thấy tài khoản" };

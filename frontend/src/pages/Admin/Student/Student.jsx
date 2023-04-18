@@ -7,11 +7,11 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import removeDiacritics from 'remove-diacritics';
 import { STORE } from '~/contants';
+import { accessTokenState } from '~/recoil/store/account';
 import { pageLoadingState } from '~/recoil/store/app';
 import { showNotification } from '~/utils';
+import api from '~/utils/api2';
 import './Student.scss';
-import callApi from '~/utils/api';
-import { accessTokenState } from '~/recoil/store/account';
 
 export default function StudentPage() {
     const [searchValue, setSearchValue] = useState('');
@@ -35,7 +35,7 @@ export default function StudentPage() {
     const getStudents = async () => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'get', url: `/students`, accessToken });
+            const res = await api.get(`/students`, accessToken);
             setStudents(res.data);
         } catch (error) {
             if (error.status === 401) setAccessToken('');
@@ -44,7 +44,8 @@ export default function StudentPage() {
             setPageLoading(false);
         }
     };
-    useEffect(() => { document.title = 'Sinh viên';
+    useEffect(() => {
+        document.title = 'Sinh viên';
         getStudents();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -73,12 +74,7 @@ export default function StudentPage() {
         try {
             let res;
             if (isEdit) {
-                res = await callApi({
-                    method: 'put',
-                    url: `/students/${selectStudent._id}`,
-                    data: selectStudent,
-                    accessToken,
-                });
+                res = await api.put(`/students/${selectStudent._id}`, selectStudent, accessToken);
                 setStudents((preStudents) => {
                     const index = preStudents.findIndex((item) => item._id === selectStudent._id);
                     preStudents[index] = { ...preStudents[index], ...res.data };
@@ -86,7 +82,7 @@ export default function StudentPage() {
                 });
                 showNotification('success', res.message);
             } else {
-                res = await callApi({ method: 'post', url: '/students', data: selectStudent, accessToken });
+                res = await api.post('/students', selectStudent, accessToken);
                 setStudents([res.data, ...students]);
             }
             setIsOpenModal(false);
@@ -101,7 +97,7 @@ export default function StudentPage() {
     const hanldeDeleteStudent = async (idDelete) => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'delete', url: `/students/${idDelete}`, accessToken });
+            const res = await api.delete(`/students/${idDelete}`, accessToken);
             setStudents((pre) => pre.filter((student) => student._id !== idDelete));
             showNotification('success', res.message);
         } catch (error) {
@@ -195,7 +191,8 @@ export default function StudentPage() {
         formData.append('file', file);
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'post', url: `/students/uploadExcel`, data: formData, accessToken });
+            const res = await api.post(`/students/uploadExcel`, formData, accessToken);
+
             setStudents((prevStudents) => [...prevStudents, ...res.data]);
             showNotification('success', res.message);
         } catch (error) {

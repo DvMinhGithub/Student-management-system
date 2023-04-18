@@ -1,25 +1,44 @@
-import axios from 'axios';
+import axios from "axios";
 
-const apiClient = axios.create({
-    baseURL: 'http://localhost:8080/api/v1/',
-    timeout: 10000,
+const API = axios.create({
+    baseURL: "http://localhost:8080/api/v1",
 });
 
-const callApi = async ({ method, url, data, params, accessToken }) => {
-    const headers = { Authorization: `Bearer ${accessToken}` };
-    const config = { headers };
-    if (params) config.params = params;
-    try {
-        const res = await apiClient({
-            method,
-            url,
-            data,
-            ...config,
-        });
-        return res.data;
-    } catch (error) {
-        throw error.response;
+API.interceptors.request.use(
+    async function (config) {
+        return config;
+    },
+    function (error) {
+        return Promise.reject(error);
     }
+);
+
+API.interceptors.response.use(
+    function (response) {
+        return response.data;
+    },
+    function (error) {
+        return Promise.reject(error.response);
+    }
+);
+
+const api = {
+    get: (url, token, params) => {
+        const config = token ? { headers: { Authorization: `Bearer ${token}` }, params } : { params }
+        return API.get(url, config);
+    },
+    post: (url, data, token) => {
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        return API.post(url, data, { headers });
+    },
+    put: (url, data, token) => {
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        return API.put(url, data, { headers });
+    },
+    delete: (url, token) => {
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        return API.delete(url, { headers });
+    },
 };
 
-export default callApi;
+export default api;

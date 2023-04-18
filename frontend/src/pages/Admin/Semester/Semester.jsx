@@ -7,11 +7,11 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import removeDiacritics from 'remove-diacritics';
 import { STORE } from '~/contants';
+import { accessTokenState } from '~/recoil/store/account';
 import { pageLoadingState } from '~/recoil/store/app';
 import { showNotification } from '~/utils';
-import callApi from '~/utils/api';
+import api from '~/utils/api2';
 import './Semester.scss';
-import { accessTokenState } from '~/recoil/store/account';
 
 export default function SemesterPage() {
     const [isOpenModal, setIsOpenModal] = useState(false);
@@ -35,7 +35,7 @@ export default function SemesterPage() {
     const getSemesters = async () => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'get', url: '/semesters', accessToken });
+            const res = await api.get('/semesters', accessToken);
             setSemesters(res.data);
         } catch (error) {
             if (error.status === 401) setAccessToken('');
@@ -45,7 +45,8 @@ export default function SemesterPage() {
         }
     };
 
-    useEffect(() => { document.title = 'Học kỳ';
+    useEffect(() => {
+        document.title = 'Học kỳ';
         getSemesters();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -66,19 +67,14 @@ export default function SemesterPage() {
         try {
             let res;
             if (isEdit) {
-                res = await callApi({
-                    method: 'put',
-                    url: `/semesters/${selectedSemester._id}`,
-                    data: selectedSemester,
-                    accessToken,
-                });
+                res = await api.put(`/semesters/${selectedSemester._id}`, selectedSemester, accessToken);
                 setSemesters((preSemester) => {
                     const index = preSemester.findIndex((item) => item._id === selectedSemester._id);
                     preSemester[index] = { ...preSemester[index], ...res.data };
                     return preSemester;
                 });
             } else {
-                res = await callApi({ method: 'post', url: '/semesters', data: selectedSemester, accessToken });
+                res = await api.post('/semesters', selectedSemester, accessToken);
                 setSemesters([...semesters, res.data]);
             }
             showNotification('success', res.message);
@@ -94,7 +90,7 @@ export default function SemesterPage() {
     const handleDelete = async (id) => {
         setPageLoading(true);
         try {
-            const res = await callApi({ method: 'delete', url: `/semesters/${id}`, accessToken });
+            const res = await api.delete(`/semesters/${id}`, accessToken);
             setSemesters((pre) => pre.filter((student) => student._id !== id));
             showNotification('success', res.message);
         } catch (error) {

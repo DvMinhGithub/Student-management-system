@@ -75,7 +75,7 @@ module.exports = {
       return { code: 500, message: "Lỗi hệ thống, vui lòng thử lại sau" };
     }
   },
-  ddeleteCourseByIdlecou: async (id) => {
+  deleteCourseById: async (id) => {
     try {
       const course = await Course.findByIdAndDelete(id);
       if (!course) return { code: 404, message: "Không tìm thấy môn học." };
