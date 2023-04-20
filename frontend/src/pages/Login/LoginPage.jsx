@@ -1,28 +1,21 @@
 import { Button, Form, Input, Spin, Tabs } from 'antd';
 import { useEffect, useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import callApi from '~/utils/api';
-import { accessTokenState, accountIdState, accountRoleState } from '~/recoil/store/account';
-import { pageLoadingState } from '~/recoil/store/app';
-import { studentAvatarState, studentIdState, studentNameState } from '~/recoil/store/student';
+import { accountState, appState, studentState } from '~/recoil/store';
 import { showNotification } from '~/utils';
+import { default as api, default as callApi } from '~/utils/api';
 import './LoginPage.scss';
-import api from '~/utils/api2';
 
 export default function LoginPage() {
-    const setAccessToken = useSetRecoilState(accessTokenState);
+    const setStudentId = useSetRecoilState(studentState.id);
+    const setStudentName = useSetRecoilState(studentState.name);
+    const setStudentAvatar = useSetRecoilState(studentState.avatar);
 
-    const setStudentId = useSetRecoilState(studentIdState);
+    const setAccessToken = useSetRecoilState(accountState.accessToken);
+    const setAccountId = useSetRecoilState(accountState.id);
+    const setAccouuntRole = useSetRecoilState(accountState.role);
 
-    const setStudentName = useSetRecoilState(studentNameState);
-
-    const setStudentAvatar = useSetRecoilState(studentAvatarState);
-
-    const setAccountId = useSetRecoilState(accountIdState);
-
-    const setAccouuntRole = useSetRecoilState(accountRoleState);
-
-    const [pageLoading, setPageLoading] = useRecoilState(pageLoadingState);
+    const [pageLoading, setPageLoading] = useRecoilState(appState.loading);
 
     const [tabKey, setTabKey] = useState('signIn');
 
@@ -48,9 +41,11 @@ export default function LoginPage() {
         try {
             // const res = await callApi({ method: 'post', url: '/auth/login', data: accountLogin });
             const res = await api.post('/auth/login', accountLogin, '');
+
             setAccessToken(res.token);
             setAccountId(res.data._id);
             setAccouuntRole(res.data.role);
+
             setStudentId(res.data[res.data.role]._id);
             setStudentName(res.data[res.data.role].name);
             setStudentAvatar(res.data[res.data.role].avatar);

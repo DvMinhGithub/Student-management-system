@@ -1,7 +1,7 @@
-import axios from "axios";
+import axios from 'axios';
 
 const API = axios.create({
-    baseURL: "http://localhost:8080/api/v1",
+    baseURL: 'http://localhost:8080/api/v1',
 });
 
 API.interceptors.request.use(
@@ -10,7 +10,7 @@ API.interceptors.request.use(
     },
     function (error) {
         return Promise.reject(error);
-    }
+    },
 );
 
 API.interceptors.response.use(
@@ -19,12 +19,12 @@ API.interceptors.response.use(
     },
     function (error) {
         return Promise.reject(error.response);
-    }
+    },
 );
 
 const api = {
     get: (url, token, params) => {
-        const config = token ? { headers: { Authorization: `Bearer ${token}` }, params } : { params }
+        const config = token ? { headers: { Authorization: `Bearer ${token}` }, params } : { params };
         return API.get(url, config);
     },
     post: (url, data, token) => {

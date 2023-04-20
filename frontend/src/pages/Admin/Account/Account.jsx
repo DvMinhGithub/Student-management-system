@@ -6,10 +6,9 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import removeDiacritics from 'remove-diacritics';
 import { STORE } from '~/contants';
-import { accessTokenState } from '~/recoil/store/account';
-import { pageLoadingState } from '~/recoil/store/app';
+import { accountState, appState } from '~/recoil/store';
 import { showNotification } from '~/utils';
-import api from '~/utils/api2';
+import api from '~/utils/api';
 import './Account.scss';
 
 export default function AccountPage() {
@@ -29,8 +28,8 @@ export default function AccountPage() {
         onChange: (e) => setPagination({ ...pagination, current: e }),
     });
 
-    const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
-    const [pageLoading, setPageLoading] = useRecoilState(pageLoadingState);
+    const [accessToken, setAccessToken] = useRecoilState(accountState.accessToken);
+    const [pageLoading, setPageLoading] = useRecoilState(appState.loading);
 
     const getAccounts = async () => {
         setPageLoading(true);
@@ -102,7 +101,7 @@ export default function AccountPage() {
     const handleResetPassword = async (id) => {
         setPageLoading(true);
         try {
-             const res = await api.put(`/accounts/${id}/resetPassword`, accessToken)
+            const res = await api.put(`/accounts/${id}/resetPassword`, accessToken);
             showNotification('success', res.message);
         } catch (error) {
             if (error.status === 401) setAccessToken('');

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { accessTokenState, accountRoleState } from '../recoil/store/account';
+import { accountState } from '~/recoil/store';
 
 const PUBLIC_ROUTES = ['/login'];
 
@@ -14,12 +14,12 @@ const ProtectedComponents = ({ children }) => {
 
     const [isRender, setIsRender] = useState(false);
 
-    const accessToken = useRecoilValue(accessTokenState);
+    const accessToken = useRecoilValue(accountState.accessToken);
 
-    const accountRole = useRecoilValue(accountRoleState);
+    const accountRole = useRecoilValue(accountState.role);
 
     useEffect(() => {
-        document.title = accountRole === 'admin' ? 'Quản lý sinh viên' : 'Sinh vien';
+        document.title = accountRole === 'admin' ? 'Quản lý sinh viên' : 'Sinh viên';
         if (accessToken) {
             if (accountRole === 'admin') {
                 navigate('/admin');

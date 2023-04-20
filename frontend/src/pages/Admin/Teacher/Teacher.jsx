@@ -6,10 +6,9 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import removeDiacritics from 'remove-diacritics';
 import { STORE } from '~/contants';
-import { accessTokenState } from '~/recoil/store/account';
-import { pageLoadingState } from '~/recoil/store/app';
+import { accountState, appState } from '~/recoil/store';
 import { showNotification } from '~/utils';
-import api from '~/utils/api2';
+import api from '~/utils/api';
 import './Teacher.scss';
 
 export default function TeacherPage() {
@@ -31,8 +30,8 @@ export default function TeacherPage() {
 
     const [listCourse, setListCourse] = useState([]);
 
-    const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
-    const [pageLoading, setPageLoading] = useRecoilState(pageLoadingState);
+    const [accessToken, setAccessToken] = useRecoilState(accountState.accessToken);
+    const [pageLoading, setPageLoading] = useRecoilState(appState.loading);
 
     const getAllTeachers = async () => {
         setPageLoading(true);

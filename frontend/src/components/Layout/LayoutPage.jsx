@@ -3,9 +3,7 @@ import { Avatar, Breadcrumb, Dropdown, Form, Input, Layout, Menu, Modal, Spin, n
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { accessTokenState, accountIdState } from '~/recoil/store/account';
-import { pageLoadingState } from '~/recoil/store/app';
-import { studentAvatarState, studentNameState } from '~/recoil/store/student';
+import { accountState, appState, studentState } from '~/recoil/store';
 import { showNotification } from '~/utils';
 import callApi from '~/utils/api';
 import './LayoutPage.scss';
@@ -43,15 +41,13 @@ export default function PageLayout({ menuItems }) {
 
     const [isOpenModal, setIsOpenModal] = useState(false);
 
-    const studentName = useRecoilValue(studentNameState);
+    const studentName = useRecoilValue(studentState.name);
+    const studentAvatar = useRecoilValue(studentState.avatar);
 
-    const studentAvatar = useRecoilValue(studentAvatarState);
+    const accountId = useRecoilValue(accountState.id);
+    const [accessToken, setAccessToken] = useRecoilState(accountState.accessToken);
 
-    const accountId = useRecoilValue(accountIdState);
-
-    const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
-
-    const [pageLoading, setPageLoading] = useRecoilState(pageLoadingState);
+    const [pageLoading, setPageLoading] = useRecoilState(appState.loading);
 
     const [changePassword, setChangePassword] = useState({});
 

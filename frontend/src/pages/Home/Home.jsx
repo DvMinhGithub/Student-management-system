@@ -3,21 +3,19 @@ import dayjs from 'dayjs';
 import jwtDecodeb from 'jwt-decode';
 import { useCallback, useEffect, useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { accessTokenState } from '~/recoil/store/account';
-import { pageLoadingState } from '~/recoil/store/app';
-import { studentAvatarState, studentNameState } from '~/recoil/store/student';
+import { accountState, appState, studentState } from '~/recoil/store';
 import { showNotification } from '~/utils';
-import api from '~/utils/api2';
+import api from '~/utils/api';
 import './Home.scss';
 
 export default function HomePage() {
     const [userInfo, setUserInfo] = useState({});
     const [avatar, setAvatar] = useState({});
     const [previewImg, setPreviewImg] = useState();
-    const setStudentName = useSetRecoilState(studentNameState);
-    const setStudentAvatar = useSetRecoilState(studentAvatarState);
-    const [pageLoading, setPageLoading] = useRecoilState(pageLoadingState);
-    const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
+    const setStudentName = useSetRecoilState(studentState.name);
+    const setStudentAvatar = useSetRecoilState(studentState.avatar);
+    const [pageLoading, setPageLoading] = useRecoilState(appState.loading);
+    const [accessToken, setAccessToken] = useRecoilState(accountState.accessToken);
 
     const getStudentInfo = useCallback(async () => {
         let { role, userId } = jwtDecodeb(accessToken);
@@ -61,7 +59,7 @@ export default function HomePage() {
         if (avatar) {
             data.append('avatar', avatar);
         }
-        
+
         const updatedUserInfo = { ...userInfo };
         delete updatedUserInfo.courses;
         Object.entries(updatedUserInfo).forEach(([key, value]) => {
