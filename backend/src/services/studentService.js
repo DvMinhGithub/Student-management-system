@@ -1,9 +1,11 @@
+const bcrypt = require("bcrypt");
+const xlsx = require("xlsx");
+const fs = require("fs");
+const path = require("path");
+
 const Student = require("../models/studentModel");
 const Course = require("../models/courseModel");
 const Account = require("../models/accountModel");
-
-const bcrypt = require("bcrypt");
-const xlsx = require("xlsx");
 
 const getUniqueCode = async () => {
   let currentDate = new Date();
@@ -59,6 +61,21 @@ module.exports = {
   },
   updateStudent: async (studentId, body) => {
     try {
+      const currentStudent = await Student.findById(id);
+      const currentAvatarUrl = currentStudent.avatar;
+      const newAvatarUrl = body.avatar
+
+      if (newAvatarUrl) {
+        if (currentAvatarUrl && currentAvatarUrl !== newAvatarUrl) {
+          const oldAvatarPath = path.join(
+            __dirname,
+            "../../public",
+            currentAvatarUrl.replace(`http://localhost:${process.env.PORT}`, "")
+          );
+          if (fs.existsSync(oldAvatarPath)) fs.unlinkSync(oldAvatarPath)
+        }
+      }
+
       const student = await Student.findByIdAndUpdate(
         studentId,
         { $set: body },

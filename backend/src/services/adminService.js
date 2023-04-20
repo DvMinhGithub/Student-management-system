@@ -1,3 +1,6 @@
+const fs = require("fs");
+const path = require("path");
+
 const Admin = require("../models/adminModel");
 
 module.exports = {
@@ -15,6 +18,22 @@ module.exports = {
   },
   updateAdmin: async (id, body) => {
     try {
+      const currentAdmin = await Admin.findById(id)
+      const currentAvatarUrl = currentAdmin.avatar;
+      const newAvatarUrl = body.avatar
+
+      if (newAvatarUrl) {
+        if (currentAvatarUrl && currentAvatarUrl !== newAvatarUrl) {
+          const oldAvatarPath = path.join(
+            __dirname,
+            "../../public",
+            currentAvatarUrl.replace(`http://localhost:${process.env.PORT}`, "")
+          );
+          if (fs.existsSync(oldAvatarPath)) fs.unlinkSync(oldAvatarPath)
+        }
+      }
+
+
       const updatedData = await Admin.findByIdAndUpdate(
         id,
         { $set: body },
