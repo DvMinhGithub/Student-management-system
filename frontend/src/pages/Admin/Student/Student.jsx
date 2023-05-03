@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import removeDiacritics from 'remove-diacritics';
 import { STORE } from '~/contants';
-import { accountState, appState } from '~/recoil/store';
+import { appState } from '~/recoil/store';
 import { showNotification } from '~/utils';
 import api from '~/utils/api';
 import './Student.scss';
@@ -28,17 +28,16 @@ export default function StudentPage() {
     });
 
     const [selectStudent, setSelectStudent] = useState({});
-    const [accessToken, setAccessToken] = useRecoilState(accountState.accessToken);
+
     const [pageLoading, setPageLoading] = useRecoilState(appState.loading);
 
     const getStudents = async () => {
         setPageLoading(true);
         try {
-            const res = await api.get(`/students`, accessToken);
+            const res = await api.get(`/students`);
             setStudents(res.data);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }
@@ -73,7 +72,7 @@ export default function StudentPage() {
         try {
             let res;
             if (isEdit) {
-                res = await api.put(`/students/${selectStudent._id}`, selectStudent, accessToken);
+                res = await api.put(`/students/${selectStudent._id}`, selectStudent);
                 setStudents((preStudents) => {
                     const index = preStudents.findIndex((item) => item._id === selectStudent._id);
                     preStudents[index] = { ...preStudents[index], ...res.data };
@@ -81,13 +80,12 @@ export default function StudentPage() {
                 });
                 showNotification('success', res.message);
             } else {
-                res = await api.post('/students', selectStudent, accessToken);
+                res = await api.post('/students', selectStudent);
                 setStudents([res.data, ...students]);
             }
             setIsOpenModal(false);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }
@@ -96,12 +94,11 @@ export default function StudentPage() {
     const hanldeDeleteStudent = async (idDelete) => {
         setPageLoading(true);
         try {
-            const res = await api.delete(`/students/${idDelete}`, accessToken);
+            const res = await api.delete(`/students/${idDelete}`);
             setStudents((pre) => pre.filter((student) => student._id !== idDelete));
             showNotification('success', res.message);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }
@@ -190,13 +187,12 @@ export default function StudentPage() {
         formData.append('file', file);
         setPageLoading(true);
         try {
-            const res = await api.post(`/students/uploadExcel`, formData, accessToken);
+            const res = await api.post(`/students/uploadExcel`, formData);
 
             setStudents((prevStudents) => [...prevStudents, ...res.data]);
             showNotification('success', res.message);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }

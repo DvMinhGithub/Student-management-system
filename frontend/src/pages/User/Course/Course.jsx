@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import removeDiacritics from 'remove-diacritics';
 import { STORE } from '~/contants';
-import { accountState, appState, studentState } from '~/recoil/store';
+import { appState, studentState } from '~/recoil/store';
 import { showNotification } from '~/utils';
 import api from '~/utils/api';
 import './Course.scss';
@@ -26,18 +26,15 @@ export default function CoursePage() {
 
     const studentId = useRecoilValue(studentState.id);
 
-    const [accessToken, setAccessToken] = useRecoilState(accountState.accessToken);
-
     const [pageLoading, setPageLoading] = useRecoilState(appState.loading);
 
     const getCourses = async () => {
         try {
             setPageLoading(true);
-            const res = await api.get('/courses', accessToken);
+            const res = await api.get('/courses');
             setCourses(res);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }
@@ -47,12 +44,11 @@ export default function CoursePage() {
         try {
             setPageLoading(true);
 
-            const res = await api.get('/semesters', accessToken);
+            const res = await api.get('/semesters');
             setSemesters(res.data);
             setPageLoading(false);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
             setPageLoading(false);
         }
     };
@@ -67,7 +63,7 @@ export default function CoursePage() {
     const handleRegisCourse = async (courseId) => {
         try {
             setPageLoading(true);
-            const res = await api.put(`/students/register/${studentId}`, { courseId }, accessToken);
+            const res = await api.put(`/students/register/${studentId}`, { courseId });
             showNotification('success', res.message);
         } catch (error) {
             showNotification('info', error.data.message);
@@ -79,7 +75,7 @@ export default function CoursePage() {
     const handleCancelRegisCourse = async (courseId) => {
         try {
             setPageLoading(true);
-            const res = await api.put(`/students/cancelRegister/${studentId}`, { courseId }, accessToken);
+            const res = await api.put(`/students/cancelRegister/${studentId}`, { courseId });
             showNotification('success', res.message);
         } catch (error) {
             showNotification('info', error.data.message);

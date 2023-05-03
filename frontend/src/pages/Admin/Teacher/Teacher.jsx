@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import removeDiacritics from 'remove-diacritics';
 import { STORE } from '~/contants';
-import { accountState, appState } from '~/recoil/store';
+import { appState } from '~/recoil/store';
 import { showNotification } from '~/utils';
 import api from '~/utils/api';
 import './Teacher.scss';
@@ -30,17 +30,15 @@ export default function TeacherPage() {
 
     const [listCourse, setListCourse] = useState([]);
 
-    const [accessToken, setAccessToken] = useRecoilState(accountState.accessToken);
     const [pageLoading, setPageLoading] = useRecoilState(appState.loading);
 
     const getAllTeachers = async () => {
         setPageLoading(true);
         try {
-            const res = await api.get('/teachers', accessToken);
+            const res = await api.get('/teachers');
             setListTeachers(res.data);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }
@@ -49,11 +47,10 @@ export default function TeacherPage() {
     const getAllCourses = async () => {
         setPageLoading(true);
         try {
-            const res = await api.get('/courses', accessToken);
+            const res = await api.get('/courses');
             setListCourse(res.data);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }
@@ -70,7 +67,7 @@ export default function TeacherPage() {
         formData.append('file', file);
         setPageLoading(true);
         try {
-            const res = await api.post(`teachers/uploadExcel`, formData, accessToken);
+            const res = await api.post(`teachers/uploadExcel`, formData);
             setListTeachers([...listTeachers, ...res.data]);
             showNotification('success', res.message);
         } catch (error) {
@@ -109,21 +106,20 @@ export default function TeacherPage() {
         try {
             let res;
             if (isEdit) {
-                res = await api.put(`/teachers/${selectedTeacher._id}`, teacherToUpdate, accessToken);
+                res = await api.put(`/teachers/${selectedTeacher._id}`, teacherToUpdate);
                 setListTeachers((prevList) => {
                     const index = prevList.findIndex((teacher) => teacher._id === selectedTeacher._id);
                     prevList[index] = { ...prevList[index], ...res.data };
                     return prevList;
                 });
             } else {
-                res = await api.post('/teachers', selectedTeacher, accessToken);
+                res = await api.post('/teachers', selectedTeacher);
                 setListTeachers((prevListTeachers) => [...prevListTeachers, res.data]);
             }
             showNotification('success', res.message);
             setIsOpenModal(false);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }
@@ -132,12 +128,11 @@ export default function TeacherPage() {
     const handleDeleteTeacher = async (teacher) => {
         setPageLoading(true);
         try {
-            const res = await api.delete(`/teachers/${teacher._id}`, accessToken);
+            const res = await api.delete(`/teachers/${teacher._id}`);
             setListTeachers((pre) => pre.filter((item) => item._id !== teacher._id));
             showNotification('success', res.message);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }

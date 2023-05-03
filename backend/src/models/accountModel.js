@@ -12,6 +12,7 @@ const accountSchema = new mongoose.Schema({
   admin: { type: mongoose.Schema.Types.ObjectId, ref: "Admin" },
   teacher: { type: mongoose.Schema.Types.ObjectId, ref: "Teacher" },
   student: { type: mongoose.Schema.Types.ObjectId, ref: "Student" },
+  refreshToken: { type: String },
 });
 
 module.exports = mongoose.model("Account", accountSchema);

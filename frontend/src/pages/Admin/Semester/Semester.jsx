@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import removeDiacritics from 'remove-diacritics';
 import { STORE } from '~/contants';
-import { accountState, appState } from '~/recoil/store';
+import { appState } from '~/recoil/store';
 import { showNotification } from '~/utils';
 import api from '~/utils/api';
 import './Semester.scss';
@@ -28,17 +28,16 @@ export default function SemesterPage() {
     const [searchValue, setSearchValue] = useState('');
 
     const [selectedSemester, setSelectedSemester] = useState(null);
-    const [accessToken, setAccessToken] = useRecoilState(accountState.accessToken);
+
     const [pageLoading, setPageLoading] = useRecoilState(appState.loading);
 
     const getSemesters = async () => {
         setPageLoading(true);
         try {
-            const res = await api.get('/semesters', accessToken);
+            const res = await api.get('/semesters');
             setSemesters(res.data);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }
@@ -66,21 +65,20 @@ export default function SemesterPage() {
         try {
             let res;
             if (isEdit) {
-                res = await api.put(`/semesters/${selectedSemester._id}`, selectedSemester, accessToken);
+                res = await api.put(`/semesters/${selectedSemester._id}`, selectedSemester);
                 setSemesters((preSemester) => {
                     const index = preSemester.findIndex((item) => item._id === selectedSemester._id);
                     preSemester[index] = { ...preSemester[index], ...res.data };
                     return preSemester;
                 });
             } else {
-                res = await api.post('/semesters', selectedSemester, accessToken);
+                res = await api.post('/semesters', selectedSemester);
                 setSemesters([...semesters, res.data]);
             }
             showNotification('success', res.message);
             setIsOpenModal(false);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }
@@ -89,12 +87,11 @@ export default function SemesterPage() {
     const handleDelete = async (id) => {
         setPageLoading(true);
         try {
-            const res = await api.delete(`/semesters/${id}`, accessToken);
+            const res = await api.delete(`/semesters/${id}`);
             setSemesters((pre) => pre.filter((student) => student._id !== id));
             showNotification('success', res.message);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }

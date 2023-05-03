@@ -11,7 +11,7 @@ module.exports = {
       req.account = decoded;
       next();
     } catch (error) {
-      return res.status(401).json({ message: "Phiên đăng nhập hết hạn" });
+      return res.status(403).json({ message: "Phiên đăng nhập hết hạn" });
     }
   },
   verifyAdmin: (req, res, next) => {

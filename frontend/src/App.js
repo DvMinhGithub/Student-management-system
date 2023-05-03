@@ -1,6 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import { publicRoutes } from './routes/routes';
 import ProtectedComponents from './components/protectComponent';
+import { publicRoutes } from './routes/routes';
 
 function App() {
     return (

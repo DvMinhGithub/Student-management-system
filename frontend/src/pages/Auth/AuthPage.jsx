@@ -4,14 +4,14 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { accountState, appState, studentState } from '~/recoil/store';
 import { showNotification } from '~/utils';
 import { default as api, default as callApi } from '~/utils/api';
-import './LoginPage.scss';
+import { setTokensInCookie } from '~/utils/cookies';
+import './AuthPage.scss';
 
-export default function LoginPage() {
+export default function AuthPage() {
     const setStudentId = useSetRecoilState(studentState.id);
     const setStudentName = useSetRecoilState(studentState.name);
     const setStudentAvatar = useSetRecoilState(studentState.avatar);
 
-    const setAccessToken = useSetRecoilState(accountState.accessToken);
     const setAccountId = useSetRecoilState(accountState.id);
     const setAccouuntRole = useSetRecoilState(accountState.role);
 
@@ -40,19 +40,18 @@ export default function LoginPage() {
         setPageLoading(true);
         try {
             // const res = await callApi({ method: 'post', url: '/auth/login', data: accountLogin });
-            const res = await api.post('/auth/login', accountLogin, '');
+            const res = await api.post('/auth/login', accountLogin);
+            setTokensInCookie(res.accessToken, res.refreshToken);
 
-            setAccessToken(res.token);
             setAccountId(res.data._id);
             setAccouuntRole(res.data.role);
 
             setStudentId(res.data[res.data.role]._id);
             setStudentName(res.data[res.data.role].name);
             setStudentAvatar(res.data[res.data.role].avatar);
-            showNotification('success', res.message);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            // showNotification('error', error.data.message);
+            // if (error.status === 401) set('');
+            showNotification('error', error.data.message);
         } finally {
             setPageLoading(false);
         }
@@ -65,8 +64,7 @@ export default function LoginPage() {
             showNotification('success', res.message);
             setTabKey('signIn');
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }

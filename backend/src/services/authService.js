@@ -2,6 +2,7 @@ const Account = require("../models/accountModel");
 const Student = require("../models/studentModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { getSchemaByRole, generateTokens } = require("../utils");
 
 const getUniqueCode = async () => {
   let currentDate = new Date();
@@ -67,21 +68,20 @@ module.exports = {
       const match = await bcrypt.compare(password, account.password);
       if (!match) return { code: 401, message: "Mật khẩu không hợp lệ" };
 
-      const token = jwt.sign(
-        {
-          accountId: account._id,
-          userId: account[account.role]._id.toString(),
-          role: account.role,
-        },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: "15m",
-        }
-      );
+      const data = {
+        accountId: account._id,
+        userId: account[account.role]._id,
+        role: account.role,
+      };
+      const { accessToken, refreshToken } = generateTokens(data);
+      account.refreshToken = refreshToken;
+      await account.save();
+
       return {
         code: 200,
         message: "Đăng nhập thành công",
-        token,
+        accessToken,
+        refreshToken,
         data: account,
       };
     } catch (error) {
@@ -89,4 +89,60 @@ module.exports = {
       return { code: 500, message: "Có lỗi xảy ra" };
     }
   },
+  refresh: async (body) => {
+    try {
+      const { refreshToken } = body;
+      console.log("🚀 ~ file: authService.js:95 ~ refresh: ~ refreshToken:", refreshToken)
+
+      if (!refreshToken) {
+        return {
+          code: 401,
+          message: "Refresh token is required",
+        };
+      }
+
+      const refreshTokenDoc = await Account.findOne({
+        refreshToken,
+      });
+
+      if (!refreshTokenDoc) {
+        return {
+          code: 401,
+          message: "Invalid refresh token",
+        };
+      }
+
+      const decodedToken = jwt.verify(refreshToken, process.env.JWT_SECRET);
+
+      const { userSchema } = getSchemaByRole(decodedToken.role);
+
+      const user = await userSchema.findById(decodedToken.userId);
+
+      if (!user) {
+        return res.status(401).json({ message: "User not found" });
+      }
+
+      const data = {
+        accountId: refreshTokenDoc._id,
+        userId: refreshTokenDoc[refreshTokenDoc.role]._id.toString(),
+        role: refreshTokenDoc.role,
+      };
+
+      const { accessToken, refreshToken: newRefreshToken } =
+        generateTokens(data);
+
+      refreshTokenDoc.refreshToken = newRefreshToken;
+      await refreshTokenDoc.save();
+
+      return {
+        code: 200,
+        accessToken,
+        refreshToken: newRefreshToken,
+      };
+    } catch (error) {
+      console.error(error);
+      return { code: 500, message: "Có lỗi xảy ra" };
+    }
+  },
 };
+

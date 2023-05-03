@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { accountState } from '~/recoil/store';
+import { getCookieValue } from '~/utils/cookies';
 
 const PUBLIC_ROUTES = ['/login'];
 
@@ -14,9 +15,9 @@ const ProtectedComponents = ({ children }) => {
 
     const [isRender, setIsRender] = useState(false);
 
-    const accessToken = useRecoilValue(accountState.accessToken);
-
     const accountRole = useRecoilValue(accountState.role);
+    const accessToken = getCookieValue('accessToken');
+    const accountId = useRecoilValue(accountState.id);
 
     useEffect(() => {
         document.title = accountRole === 'admin' ? 'Quản lý sinh viên' : 'Sinh viên';
@@ -37,7 +38,7 @@ const ProtectedComponents = ({ children }) => {
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [pathname, accessToken]);
+    }, [pathname, accountId]);
 
     return <>{isRender ? children : null}</>;
 };

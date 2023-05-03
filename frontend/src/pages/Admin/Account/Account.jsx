@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import removeDiacritics from 'remove-diacritics';
 import { STORE } from '~/contants';
-import { accountState, appState } from '~/recoil/store';
+import { appState } from '~/recoil/store';
 import { showNotification } from '~/utils';
 import api from '~/utils/api';
 import './Account.scss';
@@ -28,17 +28,15 @@ export default function AccountPage() {
         onChange: (e) => setPagination({ ...pagination, current: e }),
     });
 
-    const [accessToken, setAccessToken] = useRecoilState(accountState.accessToken);
     const [pageLoading, setPageLoading] = useRecoilState(appState.loading);
 
     const getAccounts = async () => {
         setPageLoading(true);
         try {
-            const res = await api.get('/accounts', accessToken);
+            const res = await api.get('/accounts');
             setListAccount(res.data);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }
@@ -68,7 +66,7 @@ export default function AccountPage() {
     const handleOk = async () => {
         setPageLoading(true);
         try {
-            const res = await api.put(`/accounts/${selectAccount._id}`, selectAccount, accessToken);
+            const res = await api.put(`/accounts/${selectAccount._id}`, selectAccount);
             setListAccount((preAccounts) => {
                 const index = preAccounts.findIndex((item) => item._id === selectAccount._id);
                 preAccounts[index] = { ...preAccounts[index], ...selectAccount };
@@ -77,8 +75,7 @@ export default function AccountPage() {
             setIsOpenModal(false);
             showNotification('success', res.message);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }
@@ -87,12 +84,11 @@ export default function AccountPage() {
     const hanndleDelete = async (idDelete) => {
         setPageLoading(true);
         try {
-            const res = await api.delete(`/accounts/${idDelete}`, accessToken);
+            const res = await api.delete(`/accounts/${idDelete}`);
             setListAccount((preAccounts) => preAccounts.filter((item) => item._id !== idDelete));
             showNotification('success', res.message);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }
@@ -101,11 +97,10 @@ export default function AccountPage() {
     const handleResetPassword = async (id) => {
         setPageLoading(true);
         try {
-            const res = await api.put(`/accounts/${id}/resetPassword`, accessToken);
+            const res = await api.put(`/accounts/${id}/resetPassword`);
             showNotification('success', res.message);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }

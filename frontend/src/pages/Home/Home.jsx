@@ -3,40 +3,43 @@ import dayjs from 'dayjs';
 import jwtDecodeb from 'jwt-decode';
 import { useCallback, useEffect, useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { accountState, appState, studentState } from '~/recoil/store';
+import { appState, studentState } from '~/recoil/store';
 import { showNotification } from '~/utils';
 import api from '~/utils/api';
+import { getCookieValue } from '~/utils/cookies';
 import './Home.scss';
 
 export default function HomePage() {
     const [userInfo, setUserInfo] = useState({});
     const [avatar, setAvatar] = useState({});
     const [previewImg, setPreviewImg] = useState();
+
     const setStudentName = useSetRecoilState(studentState.name);
     const setStudentAvatar = useSetRecoilState(studentState.avatar);
     const [pageLoading, setPageLoading] = useRecoilState(appState.loading);
-    const [accessToken, setAccessToken] = useRecoilState(accountState.accessToken);
 
-    const getStudentInfo = useCallback(async () => {
+    const accessToken = getCookieValue('accessToken');
+
+    const getStudentInfo = async () => {
         let { role, userId } = jwtDecodeb(accessToken);
         setPageLoading(true);
         try {
-            const { data } = await api.get(`/${role}s/detail/${userId}`, accessToken);
-            setUserInfo(data);
-            setStudentName(data.name);
+            const res = await api.get(`/${role}s/detail/${userId}`);
+            setUserInfo(res.data);
+            setStudentName(res.data.name);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }
-    }, [accessToken, setPageLoading, setStudentName, setAccessToken]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    };
 
     useEffect(() => {
         document.title = 'Trang chủ';
         getStudentInfo();
-    }, [getStudentInfo]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleChangeInput = useCallback((e) => {
         const { name, value } = e.target;
@@ -67,13 +70,12 @@ export default function HomePage() {
         });
 
         try {
-            const res = await api.put(`/${role}s/${userInfo._id}`, data, accessToken);
+            const res = await api.put(`/${role}s/${userInfo._id}`, data);
             setStudentName(res.data.name);
             setStudentAvatar(res.data.avatar);
             showNotification('success', res.message);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }

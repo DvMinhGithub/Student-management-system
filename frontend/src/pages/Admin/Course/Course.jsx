@@ -20,7 +20,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import removeDiacritics from 'remove-diacritics';
 import { STORE } from '~/contants';
-import { accountState, appState } from '~/recoil/store';
+import { appState } from '~/recoil/store';
 import { showNotification } from '~/utils';
 import api from '~/utils/api';
 import './Course.scss';
@@ -43,18 +43,17 @@ export default function CoursePage() {
     const [courses, setCourses] = useState([]);
 
     const [semesters, setSemesters] = useState([]);
-    const [accessToken, setAccessToken] = useRecoilState(accountState.accessToken);
+
     const [pageLoading, setPageLoading] = useRecoilState(appState.loading);
 
     const getCourses = async () => {
         setPageLoading(true);
         try {
-            const res = await api.get('/courses', accessToken);
+            const res = await api.get('/courses');
             setCourses(res.data);
             setPageLoading(false);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
             setPageLoading(false);
         }
     };
@@ -62,12 +61,11 @@ export default function CoursePage() {
     const getSemesters = async () => {
         try {
             setPageLoading(true);
-            const res = await api.get('/semesters', accessToken);
+            const res = await api.get('/semesters');
             setSemesters(res.data);
             setPageLoading(false);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
             setPageLoading(false);
         }
     };
@@ -105,7 +103,7 @@ export default function CoursePage() {
                 // if id is passed in, it means update course
                 selectedCourse.semesters = selectedCourse.semesters.map((semester) => semester._id);
 
-                res = await api.put(`/courses/${selectedCourse._id}`, selectedCourse, accessToken);
+                res = await api.put(`/courses/${selectedCourse._id}`, selectedCourse);
 
                 setCourses((prevCourses) => {
                     const index = prevCourses.findIndex((course) => course._id === selectedCourse._id);
@@ -113,15 +111,14 @@ export default function CoursePage() {
                     return prevCourses;
                 });
             } else {
-                res = await api.post('/courses', selectedCourse, accessToken);
+                res = await api.post('/courses', selectedCourse);
                 setCourses([...courses, res.data]);
             }
 
             showNotification('success', res.message);
             setIsOpenModal(false);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }
@@ -130,12 +127,11 @@ export default function CoursePage() {
     const handleDelete = async (idDelete) => {
         setPageLoading(true);
         try {
-            const res = await api.delete(`/courses/${idDelete}`, accessToken);
+            const res = await api.delete(`/courses/${idDelete}`);
             setCourses((prevCourses) => prevCourses.filter((course) => course._id !== idDelete));
             showNotification('success', res.message);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }
@@ -230,12 +226,11 @@ export default function CoursePage() {
         formData.append('file', file);
         setPageLoading(true);
         try {
-            const res = await api.post(`courses/uploadExcel`, formData, accessToken);
+            const res = await api.post(`courses/uploadExcel`, formData);
             setCourses([...courses, ...res.data]);
             showNotification('success', res.message);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setPageLoading(false);
         }

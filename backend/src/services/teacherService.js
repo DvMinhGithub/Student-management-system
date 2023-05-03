@@ -4,6 +4,7 @@ const Account = require("../models/accountModel");
 
 const xlsx = require("xlsx");
 const bcrypt = require("bcrypt");
+
 const getUniqueTeacherCode = async () => {
   let currentDate = new Date();
   let year = currentDate.getFullYear().toString().substr(-2);
@@ -13,6 +14,7 @@ const getUniqueTeacherCode = async () => {
   let suffix = (count + 1).toString().padStart(3, "0");
   return code + suffix;
 };
+
 module.exports = {
   getAllTeachers: async () => {
     try {

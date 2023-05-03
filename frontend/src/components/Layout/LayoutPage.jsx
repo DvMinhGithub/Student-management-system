@@ -1,17 +1,15 @@
 import { ExclamationCircleFilled, LoginOutlined, SecurityScanOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Breadcrumb, Dropdown, Form, Input, Layout, Menu, Modal, Spin, notification, theme } from 'antd';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { accountState, appState, studentState } from '~/recoil/store';
 import { showNotification } from '~/utils';
 import callApi from '~/utils/api';
+import { removeTokensFromCookie } from '~/utils/cookies';
 import './LayoutPage.scss';
 const { Header, Sider, Content } = Layout;
 
 export default function PageLayout({ menuItems }) {
-    const navigate = useNavigate();
-
     const dropdownItems = [
         {
             key: 'myInfo',
@@ -44,8 +42,7 @@ export default function PageLayout({ menuItems }) {
     const studentName = useRecoilValue(studentState.name);
     const studentAvatar = useRecoilValue(studentState.avatar);
 
-    const accountId = useRecoilValue(accountState.id);
-    const [accessToken, setAccessToken] = useRecoilState(accountState.accessToken);
+    const [accountId, setAccountId] = useRecoilState(accountState.id);
 
     const [pageLoading, setPageLoading] = useRecoilState(appState.loading);
 
@@ -68,8 +65,8 @@ export default function PageLayout({ menuItems }) {
                     title: 'Bạn chắc chắn muốn đăng xuất ?',
                     icon: <ExclamationCircleFilled />,
                     onOk() {
-                        setAccessToken('');
-                        navigate('/login');
+                        removeTokensFromCookie();
+                        setAccountId('');
                     },
                     onCancel() {
                         setCurrentPath(menuItems[0].key);
@@ -122,12 +119,10 @@ export default function PageLayout({ menuItems }) {
                 method: 'PUT',
                 url: `/accounts/changePassword/${accountId}`,
                 data: changePassword,
-                accessToken,
             });
             showNotification('success', res.message);
         } catch (error) {
-            if (error.status === 401) setAccessToken('');
-            showNotification('error', error.data.message);
+            showNotification('error', error);
         } finally {
             setIsOpenModal(false);
             setPageLoading(false);

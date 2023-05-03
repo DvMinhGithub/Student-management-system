@@ -16,6 +16,7 @@ const getUniqueCode = async () => {
   let suffix = (count + 1).toString().padStart(3, "0");
   return code + suffix;
 };
+
 module.exports = {
   getStudents: async () => {
     try {
@@ -63,7 +64,7 @@ module.exports = {
     try {
       const currentStudent = await Student.findById(id);
       const currentAvatarUrl = currentStudent.avatar;
-      const newAvatarUrl = body.avatar
+      const newAvatarUrl = body.avatar;
 
       if (newAvatarUrl) {
         if (currentAvatarUrl && currentAvatarUrl !== newAvatarUrl) {
@@ -72,7 +73,7 @@ module.exports = {
             "../../public",
             currentAvatarUrl.replace(`http://localhost:${process.env.PORT}`, "")
           );
-          if (fs.existsSync(oldAvatarPath)) fs.unlinkSync(oldAvatarPath)
+          if (fs.existsSync(oldAvatarPath)) fs.unlinkSync(oldAvatarPath);
         }
       }
 

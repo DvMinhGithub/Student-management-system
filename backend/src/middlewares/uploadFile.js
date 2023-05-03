@@ -1,4 +1,5 @@
 const multer = require("multer");
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     if (file.originalname.includes("xlsx")) cb(null, "public/files");
@@ -16,7 +17,9 @@ const storage = multer.diskStorage({
     );
   },
 });
+
 const upload = multer({ storage: storage });
+
 const uploadFile = (type) => (req, res, next) => {
   upload.single(type)(req, res, function (err) {
     if (err instanceof multer.MulterError) {
@@ -27,4 +30,5 @@ const uploadFile = (type) => (req, res, next) => {
     next();
   });
 };
+
 module.exports = uploadFile;

@@ -8,11 +8,6 @@ export const appState = {
 };
 
 export const accountState = {
-    accessToken: atom({
-        key: '@account/accessToken',
-        default: '',
-        effects_UNSTABLE: [persistAtom],
-    }),
     id: atom({
         key: '@account/id',
         default: '',
