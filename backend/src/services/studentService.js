@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const xlsx = require("xlsx");
 const fs = require("fs");
 const path = require("path");
@@ -48,7 +48,7 @@ module.exports = {
       if (existingStudent)
         return { code: 400, message: "Sinh viên đã tồn tại" };
       else {
-        data.code = await getUniqueStudentCode();
+        data.code = await getUniqueCode();
         const student = await Student.create(data);
         return {
           code: 201,
@@ -62,7 +62,7 @@ module.exports = {
   },
   updateStudent: async (studentId, body) => {
     try {
-      const currentStudent = await Student.findById(id);
+      const currentStudent = await Student.findById(studentId);
       const currentAvatarUrl = currentStudent.avatar;
       const newAvatarUrl = body.avatar;
 

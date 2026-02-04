@@ -29,10 +29,10 @@ module.exports = {
 
   generateTokens: (data) => {
     const accessToken = jwt.sign({ ...data }, process.env.JWT_SECRET, {
-      expiresIn: "1m",
+      expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES,
     });
     const refreshToken = jwt.sign({ ...data }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
+      expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRES,
     });
     return { accessToken, refreshToken };
   },

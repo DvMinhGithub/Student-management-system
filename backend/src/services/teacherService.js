@@ -3,7 +3,7 @@ const Teacher = require("../models/teacherModel");
 const Account = require("../models/accountModel");
 
 const xlsx = require("xlsx");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 const getUniqueTeacherCode = async () => {
   let currentDate = new Date();

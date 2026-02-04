@@ -1,6 +1,6 @@
 const Account = require("../models/accountModel");
 const Student = require("../models/studentModel");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { getSchemaByRole, generateTokens } = require("../utils");
 
@@ -62,6 +62,7 @@ module.exports = {
         .populate("admin")
         .populate("teacher")
         .populate("student");
+        console.log(account)
 
       if (!account) return { code: 401, message: "Tài khoản không hợp lệ" };
 
