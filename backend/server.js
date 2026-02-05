@@ -6,10 +6,11 @@ const cors = require("cors");
 const createError = require("http-errors");
 const morgan = require("morgan");
 
-const routes = require("./src/routes");
-const connectDatabase = require("./src/configs/db");
+const routes = require("./src/modules");
+const connectDatabase = require("./src/shared/config/db");
+const config = require("./src/shared/config");
 
-const PORT = process.env.PORT || 8080;
+const PORT = config.port;
 const app = express();
 
 app.use(
