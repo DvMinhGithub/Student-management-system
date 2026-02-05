@@ -29,7 +29,8 @@ module.exports = {
     try {
       const { code, message, data } = await accountService.updateAccountById(
         req.params.id,
-        req.body
+        req.body,
+        req.account
       );
       return res.status(code).json({ message, data });
     } catch (error) {

@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { ROLES } = require("../constants/roles");
 
 module.exports = {
   verifyToken: (req, res, next) => {
@@ -15,8 +16,16 @@ module.exports = {
     }
   },
   verifyAdmin: (req, res, next) => {
-    req.account && req.account.role === "admin"
+    req.account && req.account.role === ROLES.ADMIN
       ? next()
       : res.status(403).json({ message: "Bạn không có quyền truy cập." });
+  },
+  verifySelfOrAdmin: (req, res, next) => {
+    if (!req.account) {
+      return res.status(401).json({ message: "Khong tìm thấy token" });
+    }
+    if (req.account.role === ROLES.ADMIN) return next();
+    if (req.account.accountId?.toString() === req.params.id) return next();
+    return res.status(403).json({ message: "Bạn không có quyền truy cập." });
   },
 };

@@ -76,9 +76,19 @@ module.exports = {
       return { code: 500, message: "Lỗi hệ thống, vui lòng thử lại sau." };
     }
   },
-  updateAccountById: async ( id, body ) => {
+  updateAccountById: async (id, body, requester) => {
     try {
-      const account = await Account.findByIdAndUpdate(id, body, { new: true });
+      const isAdmin = requester?.role === ROLES.ADMIN;
+      const updates = {};
+
+      if (isAdmin) {
+        if (body.role !== undefined) updates.role = body.role;
+        if (body.isDelete !== undefined) updates.isDelete = body.isDelete;
+      }
+
+      if (body.username !== undefined) updates.username = body.username;
+
+      const account = await Account.findByIdAndUpdate(id, updates, { new: true });
       if (!account) return { code: 404, message: "Không tìm thấy tài khoản" };
       return {
         code: 201,
