@@ -6,16 +6,7 @@ const path = require("path");
 const Student = require("../models/studentModel");
 const Course = require("../models/courseModel");
 const Account = require("../models/accountModel");
-
-const getUniqueCode = async () => {
-  let currentDate = new Date();
-  let year = currentDate.getFullYear().toString().substr(-2);
-  let month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
-  let code = "SV" + year + month;
-  const count = await Student.countDocuments({ code: { $regex: "^" + code } });
-  let suffix = (count + 1).toString().padStart(3, "0");
-  return code + suffix;
-};
+const { generateUniqueCodeByRole, ROLES } = require("../utils");
 
 module.exports = {
   getStudents: async () => {
@@ -48,7 +39,7 @@ module.exports = {
       if (existingStudent)
         return { code: 400, message: "Sinh viên đã tồn tại" };
       else {
-        data.code = await getUniqueCode();
+        data.code = await generateUniqueCodeByRole(ROLES.STUDENT);
         const student = await Student.create(data);
         return {
           code: 201,
@@ -174,7 +165,7 @@ module.exports = {
         );
 
         const newStudent = new Student({
-          code: await getUniqueCode(),
+          code: await generateUniqueCodeByRole(ROLES.STUDENT),
           email: row["Email"],
           name: row["Họ tên"],
           gender: row["Giới tính"],

@@ -4,19 +4,8 @@ const Account = require("../models/accountModel");
 const Admin = require("../models/adminModel");
 const Teacher = require("../models/teacherModel");
 const Student = require("../models/studentModel");
-const { getSchemaByRole } = require("../utils");
-
-const getUniqueCode = async (userSchema, charCode) => {
-  let currentDate = new Date();
-  let year = currentDate.getFullYear().toString().substr(-2);
-  let month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
-  let code = charCode + year + month;
-  const count = await userSchema.countDocuments({
-    code: { $regex: "^" + code },
-  });
-  let suffix = (count + 1).toString().padStart(3, "0");
-  return code + suffix;
-};
+const { getSchemaByRole, generateUniqueCodeByRole } = require("../utils");
+const { ROLES } = require("../constants/roles");
 
 module.exports = {
   getAllAccounts: async () => {
@@ -47,7 +36,7 @@ module.exports = {
     const { username, password, email, role, name } = body;
 
     try {
-      const { userSchema, charCode } = getSchemaByRole(role);
+      const { userSchema } = getSchemaByRole(role);
 
       const [existUsername, existEmail] = await Promise.all([
         Account.findOne({ username }),
@@ -68,7 +57,7 @@ module.exports = {
       });
 
       const newUser = await userSchema.create({
-        code: await getUniqueCode(userSchema, charCode),
+        code: await generateUniqueCodeByRole(role),
         email,
         name,
         account: newAccount._id,

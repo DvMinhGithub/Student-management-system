@@ -2,17 +2,12 @@ const Account = require("../models/accountModel");
 const Student = require("../models/studentModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { getSchemaByRole, generateTokens } = require("../utils");
-
-const getUniqueCode = async () => {
-  let currentDate = new Date();
-  let year = currentDate.getFullYear().toString().substr(-2);
-  let month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
-  let code = "TK" + year + month;
-  const count = await Student.countDocuments({ code: { $regex: "^" + code } });
-  let suffix = (count + 1).toString().padStart(3, "0");
-  return code + suffix;
-};
+const {
+  getSchemaByRole,
+  generateTokens,
+  generateUniqueCodeByRole,
+  ROLES,
+} = require("../utils");
 
 module.exports = {
   register: async (body) => {
@@ -37,7 +32,7 @@ module.exports = {
       });
 
       const newStudent = await Student.create({
-        code: await getUniqueCode(),
+        code: await generateUniqueCodeByRole(ROLES.STUDENT),
         name,
         email,
         account: newAccount._id,
@@ -146,4 +141,3 @@ module.exports = {
     }
   },
 };
-

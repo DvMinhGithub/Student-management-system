@@ -1,19 +1,11 @@
 const Course = require("../models/courseModel");
 const Teacher = require("../models/teacherModel");
 const Account = require("../models/accountModel");
+const { generateUniqueCodeByRole, ROLES } = require("../utils");
 
 const xlsx = require("xlsx");
 const bcrypt = require("bcryptjs");
 
-const getUniqueTeacherCode = async () => {
-  let currentDate = new Date();
-  let year = currentDate.getFullYear().toString().substr(-2);
-  let month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
-  let code = "GV" + year + month;
-  const count = await Teacher.countDocuments({ code: { $regex: "^" + code } });
-  let suffix = (count + 1).toString().padStart(3, "0");
-  return code + suffix;
-};
 
 module.exports = {
   getAllTeachers: async () => {
@@ -30,7 +22,7 @@ module.exports = {
       if (existingTeacher) {
         return { code: 400, message: "Giảng viên đã tồn tại" };
       }
-      data.code = await getUniqueTeacherCode();
+      data.code = await generateUniqueCodeByRole(ROLES.TEACHER);
       const teacher = new Teacher(data);
       const newTeacher = await teacher.save();
       return {
@@ -113,7 +105,7 @@ module.exports = {
         }).select("_id");
 
         const newTeacher = new Teacher({
-          code: await getUniqueTeacherCode(),
+          code: await generateUniqueCodeByRole(ROLES.TEACHER),
           email: row["Email"],
           name: row["Họ tên"],
           gender: row["Giới tính"],
@@ -127,7 +119,7 @@ module.exports = {
           username: newTeacher.code,
           password: hashedPassword,
           teacher: newTeacher._id,
-          role: "teacher",
+          role: ROLES.TEACHER,
         });
         accountPromises.push(account.save());
       }
