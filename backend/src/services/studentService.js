@@ -54,15 +54,45 @@ module.exports = {
   updateStudent: async (studentId, body) => {
     try {
       const currentStudent = await Student.findById(studentId);
-      const currentAvatarUrl = currentStudent.avatar;
-      const newAvatarUrl = body.avatar;
+      if (!currentStudent) {
+        return { code: 404, message: "Không tìm thấy sinh viên" };
+      }
 
-      if (newAvatarUrl) {
-        if (currentAvatarUrl && currentAvatarUrl !== newAvatarUrl) {
+      const currentAvatarUrl = currentStudent.avatar;
+      const newAvatarUrl = body?.avatar;
+
+      const allowedFields = [
+        "name",
+        "email",
+        "gender",
+        "phone",
+        "address",
+        "dateOfBirth",
+        "placeOfBirth",
+        "avatar",
+      ];
+
+      const updates = {};
+      for (const key of allowedFields) {
+        if (body?.[key] !== undefined) updates[key] = body[key];
+      }
+
+      if (Object.keys(updates).length === 0) {
+        return { code: 400, message: "Không có dữ liệu hợp lệ để cập nhật" };
+      }
+
+      if (
+        newAvatarUrl &&
+        typeof currentAvatarUrl === "string" &&
+        currentAvatarUrl !== newAvatarUrl
+      ) {
+        const baseUrl = `http://localhost:${process.env.PORT}`;
+        if (currentAvatarUrl.startsWith(baseUrl)) {
+          const relativePath = currentAvatarUrl.replace(baseUrl, "");
           const oldAvatarPath = path.join(
             __dirname,
             "../../public",
-            currentAvatarUrl.replace(`http://localhost:${process.env.PORT}`, "")
+            relativePath
           );
           if (fs.existsSync(oldAvatarPath)) fs.unlinkSync(oldAvatarPath);
         }
@@ -70,7 +100,7 @@ module.exports = {
 
       const student = await Student.findByIdAndUpdate(
         studentId,
-        { $set: body },
+        { $set: updates },
         { new: true }
       );
       return {
