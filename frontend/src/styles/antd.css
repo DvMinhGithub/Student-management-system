@@ -1,0 +1,122 @@
+.ant-btn {
+    border-radius: 12px;
+    height: 40px;
+    font-weight: 600;
+}
+
+.ant-btn-primary {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.ant-btn-primary:hover {
+    background: var(--primary-600) !important;
+    border-color: var(--primary-600) !important;
+}
+
+.ant-input-affix-wrapper {
+    min-height: 40px;
+}
+
+.ant-input,
+.ant-select-selector,
+.ant-picker {
+    border-radius: 12px !important;
+    border-color: var(--border) !important;
+}
+
+.ant-input,
+.ant-picker,
+.ant-select-selector,
+.ant-input-search-button,
+.ant-input-search,
+.ant-input-number {
+    min-height: 40px;
+}
+
+.ant-input-number {
+    border-radius: 12px;
+    border-color: var(--border);
+}
+
+.ant-input:hover,
+.ant-select-selector:hover,
+.ant-picker:hover,
+.ant-input-number:hover {
+    border-color: #b9c7d8 !important;
+}
+
+.ant-input:focus,
+.ant-input-focused,
+.ant-select-focused .ant-select-selector,
+.ant-picker-focused,
+.ant-input-number-focused {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 2px rgba(14, 165, 166, 0.12) !important;
+}
+
+.ant-table {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #e4ecf5;
+}
+
+.ant-table-thead > tr > th {
+    background: var(--surface-2) !important;
+    color: var(--text) !important;
+    font-weight: 600;
+    border-bottom: 1px solid #dbe6f2 !important;
+}
+
+.ant-table-tbody > tr > td {
+    border-bottom: 1px solid #edf2f7 !important;
+}
+
+.ant-table-tbody > tr:hover > td {
+    background: #f8fcff !important;
+}
+
+.ant-pagination {
+    margin-top: 16px;
+}
+
+.ant-modal .ant-modal-content {
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid #dbe6f2;
+    box-shadow: 0 20px 44px rgba(15, 23, 42, 0.16);
+}
+
+.ant-modal .ant-modal-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #e4ecf5;
+    margin-bottom: 0;
+    background: linear-gradient(180deg, #ffffff, #f8fbff);
+}
+
+.ant-modal .ant-modal-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.ant-modal .ant-modal-body {
+    padding: 18px 20px 8px;
+}
+
+.ant-modal .ant-modal-footer {
+    border-top: 1px solid #e4ecf5;
+    padding: 12px 20px 16px;
+}
+
+.ant-modal .ant-form-item-label > label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.ant-tag {
+    border-radius: 999px;
+    font-weight: 600;
+    padding: 0 8px;
+}
