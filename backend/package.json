@@ -5,7 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./server.js"
+    "start": "nodemon ./server.js",
+    "seed": "node ./src/scripts/seedVietnameseData.js",
+    "seed:reset": "node ./src/scripts/seedVietnameseData.js --reset"
+  },
+  "imports": {
+    "#src/*": "./src/*",
+    "#modules/*": "./src/modules/*",
+    "#shared/*": "./src/shared/*"
   },
   "keywords": [],
   "author": "",

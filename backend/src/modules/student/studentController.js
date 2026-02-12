@@ -1,5 +1,5 @@
 const studentService = require("./studentService");
-const config = require("../../shared/config");
+const config = require("#shared/config/index.js");
 module.exports = {
   getAllStudents: async (req, res, next) => {
     try {
@@ -30,12 +30,15 @@ module.exports = {
   updateStudent: async (req, res, next) => {
     try {
       const { id } = req.params;
-      const avatar =
-        req.file?.filename && `${config.baseUrl}/images/${req.file.filename}`;
-      const { code, message, data } = await studentService.updateStudent(id, {
-        ...req.body,
-        avatar,
-      });
+      const payload = { ...req.body };
+      if (req.file?.filename) {
+        payload.avatar = `${config.baseUrl}/images/${req.file.filename}`;
+      }
+
+      const { code, message, data } = await studentService.updateStudent(
+        id,
+        payload
+      );
       return res.status(code).json({ message, data });
     } catch (error) {
       next(error);

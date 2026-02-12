@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const semesterController = require("./semesterController");
-const { verifyToken, verifyAdmin } = require("../../shared/middlewares/verify");
+const { verifyToken, verifyAdmin } = require("#shared/middlewares/verify.js");
 
 router.get("/", verifyToken, semesterController.getSemesters);
 router.get(

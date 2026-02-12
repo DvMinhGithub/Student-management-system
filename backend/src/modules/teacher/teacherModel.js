@@ -7,6 +7,7 @@ const teacherSchema = new mongoose.Schema({
     phone: { type: String },
     address: { type: String },
     dob: { type: Date },
+    avatar: { type: String },
     isDelete: { type: Boolean, default: false },
 
     courses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }],

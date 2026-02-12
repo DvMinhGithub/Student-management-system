@@ -1,15 +1,16 @@
 const bcrypt = require("bcryptjs");
 
 const Account = require("./accountModel");
-const Admin = require("../admin/adminModel");
-const Teacher = require("../teacher/teacherModel");
-const Student = require("../student/studentModel");
-const { getSchemaByRole, generateUniqueCodeByRole } = require("../../shared/utils");
-const { ROLE_MAP } = require("../../shared/constants/roles");
+const Admin = require("#modules/admin/adminModel.js");
+const Teacher = require("#modules/teacher/teacherModel.js");
+const Student = require("#modules/student/studentModel.js");
+const { getSchemaByRole, generateUniqueCodeByRole } = require("#shared/utils/index.js");
+const { ROLE_MAP } = require("#shared/constants/roles.js");
 
 const ADMIN_ROLE = ROLE_MAP.ADMIN.role;
 const TEACHER_ROLE = ROLE_MAP.TEACHER.role;
 const STUDENT_ROLE = ROLE_MAP.STUDENT.role;
+const PASSWORD_MIN_LENGTH = 8;
 
 module.exports = {
   getAllAccounts: async () => {
@@ -124,24 +125,39 @@ module.exports = {
 
   changePassword: async ({ accountId, oldPassword, newPassword }) => {
     try {
+      const oldPasswordValue =
+        typeof oldPassword === "string" ? oldPassword.trim() : "";
+      const newPasswordValue =
+        typeof newPassword === "string" ? newPassword.trim() : "";
+
+      if (!oldPasswordValue || !newPasswordValue) {
+        return { code: 400, message: "Vui lòng nhập đầy đủ mật khẩu cũ và mật khẩu mới." };
+      }
+      if (newPasswordValue.length < PASSWORD_MIN_LENGTH) {
+        return { code: 400, message: "Mật khẩu mới phải có ít nhất 8 ký tự." };
+      }
+      if (oldPasswordValue === newPasswordValue) {
+        return { code: 400, message: "Mật khẩu mới phải khác mật khẩu cũ." };
+      }
+
       const account = await Account.findById(accountId);
       if (!account) throw { code: 404, message: "Tài khoản không tồn tại." };
 
       const isOldPasswordValid = await bcrypt.compare(
-        oldPassword,
+        oldPasswordValue,
         account.password
       );
       if (!isOldPasswordValid)
         return { code: 401, message: "Mật khẩu cũ không đúng." };
 
-      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+      const hashedNewPassword = await bcrypt.hash(newPasswordValue, 10);
       await Account.findByIdAndUpdate(accountId, {
         password: hashedNewPassword,
       });
       return { code: 200, message: "Thay đổi mật khẩu thành công" };
     } catch (error) {
       const code = error.code || 500;
-      const message = error.data.message || "Lỗi server.";
+      const message = error.message || "Lỗi server.";
       return { code, message };
     }
   },

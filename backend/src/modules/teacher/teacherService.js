@@ -1,8 +1,8 @@
-const Course = require("../course/courseModel");
+const Course = require("#modules/course/courseModel.js");
 const Teacher = require("./teacherModel");
-const Account = require("../account/accountModel");
-const { generateUniqueCodeByRole } = require("../../shared/utils");
-const { ROLE_MAP } = require("../../shared/constants/roles");
+const Account = require("#modules/account/accountModel.js");
+const { generateUniqueCodeByRole } = require("#shared/utils/index.js");
+const { ROLE_MAP } = require("#shared/constants/roles.js");
 
 const TEACHER_ROLE = ROLE_MAP.TEACHER.role;
 

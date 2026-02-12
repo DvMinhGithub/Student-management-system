@@ -1,5 +1,5 @@
 const adminService = require("./adminService");
-const config = require("../../shared/config");
+const config = require("#shared/config/index.js");
 
 module.exports = {
   getDetailAdmin: async (req, res, next) => {
@@ -14,8 +14,9 @@ module.exports = {
   updateAdmin: async (req, res, next) => {
     try {
       const updateData = { ...req.body };
-      updateData.avatar =
-        req.file?.filename && `${config.baseUrl}/images/${req.file.filename}`;
+      if (req.file?.filename) {
+        updateData.avatar = `${config.baseUrl}/images/${req.file.filename}`;
+      }
 
       const { code, ...rest } = await adminService.updateAdmin(
         req.params.id,

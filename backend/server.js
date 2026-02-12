@@ -6,9 +6,10 @@ const cors = require("cors");
 const createError = require("http-errors");
 const morgan = require("morgan");
 
-const routes = require("./src/modules");
-const connectDatabase = require("./src/shared/config/db");
-const config = require("./src/shared/config");
+const routes = require("#modules/index.js");
+const connectDatabase = require("#shared/config/db.js");
+const config = require("#shared/config/index.js");
+const responseFormatter = require("#shared/middlewares/responseFormatter.js");
 
 const PORT = config.port;
 const app = express();
@@ -23,6 +24,7 @@ app.use(
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(responseFormatter());
 
 app.use("/", express.static("public"));
 
@@ -36,8 +38,8 @@ app.use((req, res, next) => {
 
 app.use((err, req, res, next) => {
   res.status(err.status || 500).json({
-    status: err.status || 500,
-    message: err.message,
+    message: err.message || "Internal Server Error",
+    errors: err?.errors || null,
   });
 });
 

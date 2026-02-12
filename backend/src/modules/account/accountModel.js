@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { ROLE_MAP } = require("../../shared/constants/roles");
+const { ROLE_MAP } = require("#shared/constants/roles.js");
 
 const ROLE_KEYS = Object.values(ROLE_MAP).map((role) => role.role);
 const DEFAULT_ROLE = ROLE_KEYS.includes(ROLE_MAP.STUDENT.role)

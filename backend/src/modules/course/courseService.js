@@ -1,8 +1,8 @@
 const xlsx = require("xlsx");
 
 const Course = require("./courseModel");
-const Semester = require("../semester/semesterModel");
-const Student = require("../student/studentModel");
+const Semester = require("#modules/semester/semesterModel.js");
+const Student = require("#modules/student/studentModel.js");
 
 module.exports = {
   createCourse: async (body) => {

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const accountController = require("./accountController");
-const { verifyToken, verifyAdmin, verifySelfOrAdmin } = require("../../shared/middlewares/verify");
+const { verifyToken, verifyAdmin, verifySelfOrAdmin } = require("#shared/middlewares/verify.js");
 
 router.get("/", verifyToken, verifyAdmin, accountController.getAllAccounts);
 router.get(

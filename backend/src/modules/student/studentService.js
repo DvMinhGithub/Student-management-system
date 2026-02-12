@@ -4,13 +4,14 @@ const fs = require("fs");
 const path = require("path");
 
 const Student = require("./studentModel");
-const Course = require("../course/courseModel");
-const Account = require("../account/accountModel");
-const { generateUniqueCodeByRole } = require("../../shared/utils");
-const { ROLE_MAP } = require("../../shared/constants/roles");
+const Course = require("#modules/course/courseModel.js");
+const Account = require("#modules/account/accountModel.js");
+const { generateUniqueCodeByRole } = require("#shared/utils/index.js");
+const { ROLE_MAP } = require("#shared/constants/roles.js");
 
 const STUDENT_ROLE = ROLE_MAP.STUDENT.role;
-const config = require("../../shared/config");
+const config = require("#shared/config/index.js");
+const PUBLIC_DIR = path.resolve(process.cwd(), "public");
 
 module.exports = {
   getStudents: async () => {
@@ -91,12 +92,10 @@ module.exports = {
         currentAvatarUrl !== newAvatarUrl
       ) {
         if (currentAvatarUrl.startsWith(config.baseUrl)) {
-          const relativePath = currentAvatarUrl.replace(config.baseUrl, "");
-          const oldAvatarPath = path.join(
-            __dirname,
-            "../../public",
-            relativePath
-          );
+          const relativePath = currentAvatarUrl
+            .replace(config.baseUrl, "")
+            .replace(/^\/+/, "");
+          const oldAvatarPath = path.join(PUBLIC_DIR, relativePath);
           if (fs.existsSync(oldAvatarPath)) fs.unlinkSync(oldAvatarPath);
         }
       }

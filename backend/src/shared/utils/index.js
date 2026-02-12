@@ -1,10 +1,10 @@
 const jwt = require("jsonwebtoken");
-const config = require("../config");
+const config = require("#shared/config/index.js");
 
-const Admin = require("../../modules/admin/adminModel");
-const Teacher = require("../../modules/teacher/teacherModel");
-const Student = require("../../modules/student/studentModel");
-const { ROLE_MAP } = require("../constants/roles");
+const Admin = require("#modules/admin/adminModel.js");
+const Teacher = require("#modules/teacher/teacherModel.js");
+const Student = require("#modules/student/studentModel.js");
+const { ROLE_MAP } = require("#shared/constants/roles.js");
 
 const ROLE_CONFIG = {
   [ROLE_MAP.ADMIN?.role]: { code: ROLE_MAP.ADMIN?.code, model: Admin },

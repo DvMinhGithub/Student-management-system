@@ -2,7 +2,8 @@ const fs = require("fs");
 const path = require("path");
 
 const Admin = require("./adminModel");
-const config = require("../../shared/config");
+const config = require("#shared/config/index.js");
+const PUBLIC_DIR = path.resolve(process.cwd(), "public");
 
 module.exports = {
   getDetailAdmin: async (id) => {
@@ -19,21 +20,23 @@ module.exports = {
   },
   updateAdmin: async (id, body) => {
     try {
-      const currentAdmin = await Admin.findById(id)
+      const currentAdmin = await Admin.findById(id);
+      if (!currentAdmin) {
+        return { code: 404, message: "Không tìm thấy admin." };
+      }
+
       const currentAvatarUrl = currentAdmin.avatar;
-      const newAvatarUrl = body.avatar
+      const newAvatarUrl = body.avatar;
 
       if (newAvatarUrl) {
         if (currentAvatarUrl && currentAvatarUrl !== newAvatarUrl) {
-          const oldAvatarPath = path.join(
-            __dirname,
-            "../../public",
-            currentAvatarUrl.replace(config.baseUrl, "")
-          );
-          if (fs.existsSync(oldAvatarPath)) fs.unlinkSync(oldAvatarPath)
+          const relativePath = currentAvatarUrl
+            .replace(config.baseUrl, "")
+            .replace(/^\/+/, "");
+          const oldAvatarPath = path.join(PUBLIC_DIR, relativePath);
+          if (fs.existsSync(oldAvatarPath)) fs.unlinkSync(oldAvatarPath);
         }
       }
-
 
       const updatedData = await Admin.findByIdAndUpdate(
         id,

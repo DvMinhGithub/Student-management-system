@@ -16,6 +16,14 @@ module.exports = {
       next(error);
     }
   },
+  getMeProfile: async (req, res, next) => {
+    try {
+      const { code, ...rest } = await authService.getMeProfile(req.account);
+      return res.status(code).json({ ...rest });
+    } catch (error) {
+      next(error);
+    }
+  },
   refresh: async (req, res, next) => {
     try {
       const { code, ...rest } = await authService.refresh(req.body);
